@@ -9,7 +9,7 @@ Status values: **Approved** (you said yes), **Assumed** (Kiro chose it while bui
 ## Naming
 | ID | Decision | Why | Alternatives | Lives in | Status |
 |---|---|---|---|---|---|
-| NAME-1 | The plate check formerly called "plants" is now "veggies or fruit". Code key: `veggies`. Quest id: `mealWithVeggies`. Quest title: "Log a meal with veggies or fruit". | "Plants" read oddly. "Veggies or fruit" is plain English and fits Nigerian meals. | Key `produce`; label "Greens and fruit". | `src/engine/types.ts`, `quests.ts`, `constants.ts`, docs 02 and 03 | Approved |
+| NAME-1 | The plate check formerly called "plants" is now "veggies or fruit". Code key: `veggies`. Quest id: `mealWithVeggies`. Quest title: "Log a meal with veggies or fruit". | "Plants" read oddly. "Veggies or fruit" is plain English and fits Nigerian meals. | Key `produce`; label "Greens and fruit". | `src/engine/types.ts`, `quests.ts`, `constants.ts`, `src/data/schemas.ts`, docs 02 and 03 | Approved |
 
 ## Engine (spec: `.kiro/specs/engine`)
 | ID | Decision | Why | Alternatives | Lives in | Status |
@@ -30,18 +30,20 @@ Status values: **Approved** (you said yes), **Assumed** (Kiro chose it while bui
 ## Data layer (spec: `.kiro/specs/data-layer`)
 | ID | Decision | Why | Alternatives | Lives in | Status |
 |---|---|---|---|---|---|
-| DL-1 | Hooks update through a change emitter in the repository and `useSyncExternalStore`. | Works the same for IndexedDB and memory mode. No extra dependency. | `dexie-react-hooks` `useLiveQuery`. | `src/data/hooks.ts`, `repositories.ts` | Approved |
-| DL-2 | Editing a log keeps `loggedAt`, `localDate` and `localMinutes`. Only the type-specific fields change. | History never reshuffles. Streaks and quests stay stable. | Allow moving a log to another day. | `repositories.ts` | Approved |
-| DL-3 | A record that fails Zod parsing is skipped, counted, and left in storage. Reset removes it. | A later app version could still read it. | Delete bad records on read. | `repositories.ts`, `schemas` | Approved |
-| DL-4 | Keep the newest 200 coach messages. | They are small and Home shows only the latest. | Keep all; keep 50. | `repositories.ts` | Approved |
+| DL-1 | Hooks update through a change emitter in the repository and `useSyncExternalStore`. | Works the same for IndexedDB and memory mode. No extra dependency. | `dexie-react-hooks` `useLiveQuery`. | `src/data/hooks.ts`, `store.ts`, `repository-core.ts` (`Emitter`) | Approved |
+| DL-2 | Editing a log keeps `loggedAt`, `localDate` and `localMinutes`. Only the type-specific fields change. | History never reshuffles. Streaks and quests stay stable. | Allow moving a log to another day. | `repository-core.ts` (`mergePatch`), `schemas.ts` (`logPatchSchema`) | Approved |
+| DL-3 | A record that fails Zod parsing is skipped, counted, and left in storage. Reset removes it. | A later app version could still read it. | Delete bad records on read. | `repository-core.ts` (`parseLogRows`) | Approved |
+| DL-4 | Keep the newest 200 coach messages. | They are small and Home shows only the latest. | Keep all; keep 50. | `constants.ts` (`COACH_MESSAGE_LIMIT`), `repository-core.ts` | Approved |
 | DL-5 | Ask the browser for persistent storage once, best effort. | Protects data on low-storage phones. | Skip it. | `db.ts` | Approved |
-| DL-6 | No import in the MVP. Export only. | Not in the requirements. | JSON import. | `repositories.ts` | Approved |
-| DL-7 | Recompute state on `visibilitychange` and at local midnight. | "Streak at risk" is right the next morning without a reload. | Recompute only on user action. | `hooks.ts` | Approved |
+| DL-6 | No import in the MVP. Export only. | Not in the requirements. | JSON import. | `repository.ts` | Approved |
+| DL-7 | Recompute state on `visibilitychange` and at local midnight. | "Streak at risk" is right the next morning without a reload. | Recompute only on user action. | `store.ts` | Approved |
 | DL-8 | `addLog` returns `{ log, before, after, xpGained, leveledUp }`. | Instant XP feedback, and the coach spec gets its input from one call. | UI diffs state itself. | `store.ts` | Approved |
 | DL-9 | Open tabs refresh each other through a `BroadcastChannel`. | Avoids stale state when the app is open twice. | Ignore other tabs. | `dexie-repository.ts` | Approved |
-| DL-10 | Dev dependencies `jsdom` and `@testing-library/react`, used only by `*.dom.test.tsx`. | One hook test must prove re-render. | Test the store only. | `package.json`, `vitest.config.mts` | Approved |
-| DL-11 | The data layer adds files beyond `structure.md`: `schemas.ts`, `errors.ts`, `repository.ts`, `store.ts`, `repository-contract.ts`, and others listed in its design. | Small files with one job each. | Fewer, larger files. | `.kiro/steering/structure.md` | Approved || DL-12 | Shared repository logic (building logs, merging patches, budget, pruning, settings defaults, export) lives in epository-core.ts. Both repositories call it. | One rule set, so memory mode behaves the same as IndexedDB. | Duplicate logic in each repository. | src/data/repository-core.ts | **Assumed** |
-| DL-13 | Dexie transactions return validation errors as values and the caller throws them. | Dexie wraps errors thrown inside a transaction, which hid the alidation code. | Catch and unwrap Dexie errors. | dexie-repository.ts (updateLog) | **Assumed** |
+| DL-10 | Dev dependencies `jsdom` and `@testing-library/react`, used only by `*.dom.test.tsx`. | One hook test must prove re-render. | Test the store only. | `package.json`, `hooks.dom.test.tsx` | Approved |
+| DL-11 | The data layer adds files beyond `structure.md`: `schemas.ts`, `errors.ts`, `repository.ts`, `store.ts`, `repository-contract.ts`, and others listed in its design. | Small files with one job each. | Fewer, larger files. | `.kiro/steering/structure.md` | Approved |
+| DL-12 | Shared repository logic (building logs, merging patches, budget, pruning, settings defaults, export) lives in `repository-core.ts`. Both repositories call it. | One rule set, so memory mode behaves the same as IndexedDB. | Duplicate logic in each repository. | `src/data/repository-core.ts` | **Assumed** |
+| DL-13 | Dexie transactions return validation errors as values and the caller throws them. | Dexie wraps errors thrown inside a transaction, which hid the `validation` code. | Catch and unwrap Dexie errors. | `dexie-repository.ts` (`updateLog`) | **Assumed** |
+| DL-14 | Vitest 5 has no `environmentMatchGlobs`, so DOM tests opt in with a `// @vitest-environment jsdom` comment at the top of each `*.dom.test.tsx` file. | The option was removed in this Vitest version. | Vitest projects config. | `src/data/hooks.dom.test.tsx` | **Assumed** |
 
 ## How to change a decision
 1. Tell Kiro the ID and the new choice.
