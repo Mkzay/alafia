@@ -34,9 +34,15 @@ src/
     templates.ts       template lines per event
     providers/         groq.ts, gemini.ts
   data/
-    db.ts              Dexie schema
-    repositories.ts    log and settings access
-    hooks.ts           React hooks over the repositories and engine
+    schemas.ts         Zod schemas for logs, settings, coach messages, export
+    errors.ts          DataError
+    constants.ts       budget, retention, db name
+    db.ts              Dexie schema, lazy open
+    repository.ts      Repository interface
+    dexie-repository.ts, memory-repository.ts
+    repositories.ts    createRepository with memory fallback
+    store.ts           snapshot, replay, day rollover
+    hooks.ts           React hooks over the store
   components/          UI components, one folder per feature
   lib/                 small shared helpers (ids, dates)
 ```
