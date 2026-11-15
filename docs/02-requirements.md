@@ -11,7 +11,7 @@ As a user, I want to log a workout quickly so that my character gains XP.
 
 ## R2. Log a meal
 As a user, I want to record a meal with a quick plate check, without counting calories.
-1. WHEN the user picks Eat, THE SYSTEM SHALL show a meal slot (breakfast, lunch, dinner, snack) and four plate checks: protein, plants, fiber-rich carb, water.
+1. WHEN the user picks Eat, THE SYSTEM SHALL show a meal slot (breakfast, lunch, dinner, snack) and four plate checks: protein, veggies or fruit, fiber-rich carb, water.
 2. WHEN the user taps a Nigerian food preset, THE SYSTEM SHALL pre-fill suggested checks that the user can change before saving.
 3. THE SYSTEM SHALL NOT display or store calories, grams or body weight.
 4. WHEN a valid Eat log is saved, THE SYSTEM SHALL award XP per the Eat table in design section 3.

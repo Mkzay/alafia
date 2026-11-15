@@ -35,7 +35,7 @@ interface MoveLog extends BaseLog {
 interface EatLog extends BaseLog {
   type: 'eat';
   slot: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  checks: { protein: boolean; plants: boolean; fiberCarb: boolean; water: boolean };
+  checks: { protein: boolean; veggies: boolean; fiberCarb: boolean; water: boolean };
   presetId?: string;
 }
 interface RestLog extends BaseLog {
@@ -78,7 +78,7 @@ Dexie tables:
 
 **Level curve** = total XP needed to reach level L is round(60 x (L minus 1)^1.7), for L 1 to 99. Reference: L2 60, L3 195, L5 633, L10 2514. A first session of a walk and a meal reaches level 2.
 
-**Quest list** (pick 3 per day, seeded by `localDate`): Move 20 or more minutes; Log a meal with plants; Log sleep; Stretch or mobility 10 minutes; Hit all four plate checks in one meal; Log something before noon; Log two different log types today. Wording must be reviewed by hand for tone. Related stats: Move 20+ min: strength, endurance. Meal with plants: vitality. Log sleep: recovery. Stretch 10 min: agility. Four plate checks: vitality. Before noon (`localMinutes` under 720): all five. Two log types: all five.
+**Quest list** (pick 3 per day, seeded by `localDate`): Move 20 or more minutes; Log a meal with veggies or fruit; Log sleep; Stretch or mobility 10 minutes; Hit all four plate checks in one meal; Log something before noon; Log two different log types today. Wording must be reviewed by hand for tone. Related stats: Move 20+ min: strength, endurance. Meal with veggies or fruit: vitality. Log sleep: recovery. Stretch 10 min: agility. Four plate checks: vitality. Before noon (`localMinutes` under 720): all five. Two log types: all five.
 
 **Eat presets** (suggestions only, the user can change the checks). Review each by hand against your Human Kinetics knowledge before shipping: jollof rice with chicken, beans and plantain, egusi soup with swallow, moi moi, efo riro with fish, akara and pap, fried rice with salad, yam and egg sauce, fruit and groundnuts.
 

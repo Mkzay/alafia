@@ -25,7 +25,7 @@ export const STAT_ORDER: readonly StatId[] =
   ['strength', 'endurance', 'agility', 'vitality', 'recovery'];
 
 export type QuestId =
-  | 'move20' | 'mealWithPlants' | 'logSleep' | 'stretch10'
+  | 'move20' | 'mealWithVeggies' | 'logSleep' | 'stretch10'
   | 'fullPlate' | 'beforeNoon' | 'twoTypes';
 
 // BaseLog, MoveLog, EatLog, RestLog, Log as in docs/03-design.md section 2,
@@ -86,7 +86,7 @@ Each target gets `floor(xp / n)`. The remainder `r` goes one point each to the f
 | Eat | vitality |
 | Rest | recovery |
 | Quest move20 | strength, endurance |
-| Quest mealWithPlants, fullPlate | vitality |
+| Quest mealWithVeggies, fullPlate | vitality |
 | Quest logSleep | recovery |
 | Quest stretch10 | agility |
 | Quest beforeNoon, twoTypes | all five |
@@ -99,7 +99,7 @@ Each quest is `{ id, title, related: StatId[], isDone(dayLogs) }`. `title` is th
 | Quest | `isDone` |
 |---|---|
 | move20 | any Move with `minutes >= 20` |
-| mealWithPlants | any Eat with `checks.plants` |
+| mealWithVeggies | any Eat with `checks.veggies` |
 | logSleep | any Rest |
 | stretch10 | any Move with `kind === 'mobility'` and `minutes >= 10` |
 | fullPlate | any Eat with all four checks true |

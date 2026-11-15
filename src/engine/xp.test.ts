@@ -24,7 +24,7 @@ const eat = (n: number): EatLog => ({
   slot: 'lunch',
   checks: {
     protein: n > 0,
-    plants: n > 1,
+    veggies: n > 1,
     fiberCarb: n > 2,
     water: n > 3,
   },

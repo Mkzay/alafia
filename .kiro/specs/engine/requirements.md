@@ -68,5 +68,5 @@ Scope: the pure TypeScript progression engine in `src/engine`. No UI, storage or
 - **Q3.** Property 6 is replaced. New property: removing a log never changes XP on earlier local days, and never makes log XP on any day exceed 300.
 - **Q4.** Property 2 is tested for logs appended after all existing logs. The earlier-Rest edge case is accepted.
 - **Q5.** Quest bonuses sit on top of the 300 log-XP cap.
-- **Q6.** Quest to stat mapping: Move 20+ min: strength and endurance. Meal with plants: vitality. Log sleep: recovery. Stretch 10 min: agility. Four plate checks: vitality. Before noon: all five. Two log types: all five.
+- **Q6.** Quest to stat mapping: Move 20+ min: strength and endurance. Meal with veggies or fruit: vitality. Log sleep: recovery. Stretch 10 min: agility. Four plate checks: vitality. Before noon: all five. Two log types: all five.
 - **Q7.** When the cap cuts a log's XP, the stat gets the reduced XP split by the same ratios.

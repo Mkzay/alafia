@@ -15,7 +15,7 @@ const eat = (checks: Partial<EatLog['checks']>): EatLog => ({
   ...base,
   type: 'eat',
   slot: 'lunch',
-  checks: { protein: false, plants: false, fiberCarb: false, water: false, ...checks },
+  checks: { protein: false, veggies: false, fiberCarb: false, water: false, ...checks },
 });
 const rest: RestLog = { ...base, type: 'rest', hours: 8, quality: 3 };
 
@@ -26,9 +26,9 @@ describe('quest conditions', () => {
     expect(done('move20', [move(19)])).toBe(false);
     expect(done('move20', [move(20)])).toBe(true);
   });
-  it('mealWithPlants needs the plants check', () => {
-    expect(done('mealWithPlants', [eat({ protein: true })])).toBe(false);
-    expect(done('mealWithPlants', [eat({ plants: true })])).toBe(true);
+  it('mealWithVeggies needs the veggies check', () => {
+    expect(done('mealWithVeggies', [eat({ protein: true })])).toBe(false);
+    expect(done('mealWithVeggies', [eat({ veggies: true })])).toBe(true);
   });
   it('logSleep needs a Rest log', () => {
     expect(done('logSleep', [move(30)])).toBe(false);
@@ -40,9 +40,9 @@ describe('quest conditions', () => {
     expect(done('stretch10', [move(10, 'mobility')])).toBe(true);
   });
   it('fullPlate needs all four checks', () => {
-    expect(done('fullPlate', [eat({ protein: true, plants: true, fiberCarb: true })])).toBe(false);
+    expect(done('fullPlate', [eat({ protein: true, veggies: true, fiberCarb: true })])).toBe(false);
     expect(
-      done('fullPlate', [eat({ protein: true, plants: true, fiberCarb: true, water: true })]),
+      done('fullPlate', [eat({ protein: true, veggies: true, fiberCarb: true, water: true })]),
     ).toBe(true);
   });
   it('beforeNoon uses localMinutes under 720', () => {

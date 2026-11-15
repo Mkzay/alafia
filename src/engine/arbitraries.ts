@@ -23,7 +23,7 @@ export const eatDraft: fc.Arbitrary<Draft<EatLog>> = fc.record({
   slot: fc.constantFrom('breakfast', 'lunch', 'dinner', 'snack'),
   checks: fc.record({
     protein: fc.boolean(),
-    plants: fc.boolean(),
+    veggies: fc.boolean(),
     fiberCarb: fc.boolean(),
     water: fc.boolean(),
   }),

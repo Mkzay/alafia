@@ -24,11 +24,11 @@ export const QUEST_DEFINITIONS: Record<QuestId, QuestDefinition> = {
     related: ['strength', 'endurance'],
     isDone: (logs) => logs.some((l) => l.type === 'move' && l.minutes >= QUEST_MOVE_MINUTES),
   },
-  mealWithPlants: {
-    id: 'mealWithPlants',
+  mealWithVeggies: {
+    id: 'mealWithVeggies',
     title: 'Log a meal with veggies or fruit',
     related: ['vitality'],
-    isDone: (logs) => logs.some((l) => l.type === 'eat' && l.checks.plants),
+    isDone: (logs) => logs.some((l) => l.type === 'eat' && l.checks.veggies),
   },
   logSleep: {
     id: 'logSleep',

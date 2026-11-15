@@ -48,7 +48,7 @@ export const QUEST_STRETCH_MINUTES = 10;
 
 export const QUEST_IDS: readonly QuestId[] = [
   'move20',
-  'mealWithPlants',
+  'mealWithVeggies',
   'logSleep',
   'stretch10',
   'fullPlate',

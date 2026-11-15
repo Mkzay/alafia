@@ -10,7 +10,7 @@ export const STAT_ORDER: readonly StatId[] = [
 
 export type QuestId =
   | 'move20'
-  | 'mealWithPlants'
+  | 'mealWithVeggies'
   | 'logSleep'
   | 'stretch10'
   | 'fullPlate'
@@ -45,7 +45,7 @@ export type MealSlot = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
 export interface PlateChecks {
   protein: boolean;
-  plants: boolean;
+  veggies: boolean;
   fiberCarb: boolean;
   water: boolean;
 }

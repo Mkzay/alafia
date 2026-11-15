@@ -24,7 +24,7 @@ const eat = (localDate = DATE, lm = 700): EatLog => ({
   ...meta(localDate, lm),
   type: 'eat',
   slot: 'lunch',
-  checks: { protein: true, plants: true, fiberCarb: false, water: false },
+  checks: { protein: true, veggies: true, fiberCarb: false, water: false },
 });
 const rest = (localDate = DATE, lm = 800): RestLog => ({
   ...meta(localDate, lm),

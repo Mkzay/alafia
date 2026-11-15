@@ -22,7 +22,7 @@ describe('routing', () => {
         ...base,
         type: 'eat',
         slot: 'lunch',
-        checks: { protein: true, plants: true, fiberCarb: true, water: true },
+        checks: { protein: true, veggies: true, fiberCarb: true, water: true },
       }),
     ).toEqual(['vitality']);
     expect(routeTargets({ ...base, type: 'rest', hours: 8, quality: 3 })).toEqual(['recovery']);
