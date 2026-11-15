@@ -39,12 +39,13 @@ src/
     constants.ts       budget, retention, db name
     db.ts              Dexie schema, lazy open
     repository.ts      Repository interface
+    repository-core.ts shared pure logic for all repositories
     dexie-repository.ts, memory-repository.ts
     repositories.ts    createRepository with memory fallback
     store.ts           snapshot, replay, day rollover
     hooks.ts           React hooks over the store
   components/          UI components, one folder per feature
-  lib/                 small shared helpers (ids, dates)
+  lib/                 small shared helpers: ids.ts, dates.ts (local date and minutes)
 ```
 
 ## Naming

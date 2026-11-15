@@ -40,7 +40,9 @@ Status values: **Approved** (you said yes), **Assumed** (Kiro chose it while bui
 | DL-8 | `addLog` returns `{ log, before, after, xpGained, leveledUp }`. | Instant XP feedback, and the coach spec gets its input from one call. | UI diffs state itself. | `store.ts` | Approved |
 | DL-9 | Open tabs refresh each other through a `BroadcastChannel`. | Avoids stale state when the app is open twice. | Ignore other tabs. | `dexie-repository.ts` | Approved |
 | DL-10 | Dev dependencies `jsdom` and `@testing-library/react`, used only by `*.dom.test.tsx`. | One hook test must prove re-render. | Test the store only. | `package.json`, `vitest.config.mts` | Approved |
-| DL-11 | The data layer adds files beyond `structure.md`: `schemas.ts`, `errors.ts`, `repository.ts`, `store.ts`, `repository-contract.ts`, and others listed in its design. | Small files with one job each. | Fewer, larger files. | `.kiro/steering/structure.md` | Approved |
+| DL-11 | The data layer adds files beyond `structure.md`: `schemas.ts`, `errors.ts`, `repository.ts`, `store.ts`, `repository-contract.ts`, and others listed in its design. | Small files with one job each. | Fewer, larger files. | `.kiro/steering/structure.md` | Approved || DL-12 | Shared repository logic (building logs, merging patches, budget, pruning, settings defaults, export) lives in epository-core.ts. Both repositories call it. | One rule set, so memory mode behaves the same as IndexedDB. | Duplicate logic in each repository. | src/data/repository-core.ts | **Assumed** |
+| DL-13 | Dexie transactions return validation errors as values and the caller throws them. | Dexie wraps errors thrown inside a transaction, which hid the alidation code. | Catch and unwrap Dexie errors. | dexie-repository.ts (updateLog) | **Assumed** |
+
 ## How to change a decision
 1. Tell Kiro the ID and the new choice.
 2. Kiro updates the matching spec in `.kiro/specs`, the files in `docs/`, the code and the tests in one change.
