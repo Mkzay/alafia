@@ -7,10 +7,10 @@ Requirements: `requirements.md`. Design: `design.md`. Work in order. Each task e
   - [x] 1.2 Add `constants.ts` with every tunable number (multipliers, XP bases, Eat limit 5, daily cap 300, quest bonus 20, streak cap 7, level curve, max level 99, noon 720). _E1.2_
   - [x] 1.3 Add `dates.ts` (`addDays`, `compareDates`) using `Date.UTC` only, with unit tests for month, year and leap-year edges. _E1.1_
 
-- [ ] 2. Levels and avatar tier
-  - [ ] 2.1 Implement `levels.ts`: `xpForLevel` table, `levelFromXp` (binary search, cap 99), `levelProgress`, `avatarTier`. _E5.1 to E5.4_
-  - [ ] 2.2 Unit tests: worked examples L2 60, L3 195, L5 633, L10 2514; level 99 progress; tier boundaries 4/5, 9/10, 19/20.
-  - [ ] 2.3 Property tests (P1, P10) in `levels.property.test.ts`.
+- [x] 2. Levels and avatar tier
+  - [x] 2.1 Implement `levels.ts`: `xpForLevel` table, `levelFromXp` (binary search, cap 99), `levelProgress`, `avatarTier`. _E5.1 to E5.4_
+  - [x] 2.2 Unit tests: worked examples L2 60, L3 195, L5 633, L10 2514; level 99 progress; tier boundaries 4/5, 9/10, 19/20.
+  - [x] 2.3 Property tests (P1, P10) in `levels.property.test.ts`.
 
 - [ ] 3. XP rules
   - [ ] 3.1 Implement `xp.ts`: `baseXp` for Move, Eat and Rest, with the Eat count and first-Rest rules driven by `ctx`; `applyStreakMultiplier` with integer math; `applyCap`. _E2.1 to E2.5, E3.1, E3.2, E3.4_
