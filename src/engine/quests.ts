@@ -26,7 +26,7 @@ export const QUEST_DEFINITIONS: Record<QuestId, QuestDefinition> = {
   },
   mealWithPlants: {
     id: 'mealWithPlants',
-    title: 'Log a meal with plants',
+    title: 'Log a meal with veggies or fruit',
     related: ['vitality'],
     isDone: (logs) => logs.some((l) => l.type === 'eat' && l.checks.plants),
   },

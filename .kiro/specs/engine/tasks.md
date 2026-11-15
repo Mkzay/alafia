@@ -30,7 +30,7 @@ Requirements: `requirements.md`. Design: `design.md`. Work in order. Each task e
   - [x] 6.1 Implement `quests.ts`: the seven definitions with reviewable titles, `questsForDate` (FNV-1a, mulberry32, partial Fisher-Yates), `evaluateQuests`. _E7.1 to E7.4_
   - [x] 6.2 Unit tests: each `isDone` condition at its boundary (19 vs 20 min, 9 vs 10 min mobility, 719 vs 720 `localMinutes`, one type vs two); a fixed date always returns the same 3.
   - [x] 6.3 Property test (P7): 3 distinct ids for any date, stable on repeat.
-  - [ ] 6.4 Ask the user to review quest titles for tone. Do not mark done until they approve.
+  - [x] 6.4 Ask the user to review quest titles for tone. Do not mark done until they approve.
 
 - [x] 7. Replay
   - [x] 7.1 Implement `replay.ts` per design section 3: filter future dates, sort by `(loggedAt, id)`, group by date, apply multiplier and cap, route stats, add quest bonuses, compute totals, level, streak and quests for `asOf`. _E1, E3, E8_
