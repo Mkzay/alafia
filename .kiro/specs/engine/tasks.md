@@ -2,10 +2,10 @@
 
 Requirements: `requirements.md`. Design: `design.md`. Work in order. Each task ends with `pnpm test`, `pnpm lint` and `pnpm typecheck` passing. All code is under `src/engine`.
 
-- [ ] 1. Foundations
-  - [ ] 1.1 Add `types.ts` (`StatId`, `STAT_ORDER`, `QuestId`, log types with `localMinutes`, `CharacterState`). _E8.1_
-  - [ ] 1.2 Add `constants.ts` with every tunable number (multipliers, XP bases, Eat limit 5, daily cap 300, quest bonus 20, streak cap 7, level curve, max level 99, noon 720). _E1.2_
-  - [ ] 1.3 Add `dates.ts` (`addDays`, `compareDates`) using `Date.UTC` only, with unit tests for month, year and leap-year edges. _E1.1_
+- [x] 1. Foundations
+  - [x] 1.1 Add `types.ts` (`StatId`, `STAT_ORDER`, `QuestId`, log types with `localMinutes`, `CharacterState`). _E8.1_
+  - [x] 1.2 Add `constants.ts` with every tunable number (multipliers, XP bases, Eat limit 5, daily cap 300, quest bonus 20, streak cap 7, level curve, max level 99, noon 720). _E1.2_
+  - [x] 1.3 Add `dates.ts` (`addDays`, `compareDates`) using `Date.UTC` only, with unit tests for month, year and leap-year edges. _E1.1_
 
 - [ ] 2. Levels and avatar tier
   - [ ] 2.1 Implement `levels.ts`: `xpForLevel` table, `levelFromXp` (binary search, cap 99), `levelProgress`, `avatarTier`. _E5.1 to E5.4_
