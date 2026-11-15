@@ -24,6 +24,7 @@ interface BaseLog {
   type: LogType;
   loggedAt: number;    // epoch ms
   localDate: string;   // 'YYYY-MM-DD' on the device at log time
+  localMinutes: number; // 0..1439, minutes since local midnight at log time
 }
 interface MoveLog extends BaseLog {
   type: 'move';
@@ -58,9 +59,9 @@ Dexie tables:
 
 **Quest bonus** = 20 XP each, once per quest per day.
 
-**Streak multiplier** = 1 + 0.02 x min(streak, 7), applied to a log's XP before the cap.
+**Streak multiplier** = 1 + 0.02 x min(streak, 7), applied to a log's XP before the cap. `streak` is the streak that ends the day before the log's `localDate`.
 
-**Daily cap** = 300 XP per local day, applied in (loggedAt, id) order.
+**Daily cap** = 300 log XP per local day, applied in (loggedAt, id) order. Quest bonuses are added on top of the cap.
 
 **Stat routing**
 | Source | Stat |
@@ -71,13 +72,13 @@ Dexie tables:
 | Move sport | Endurance 50%, Agility 50% |
 | Eat | Vitality 100% |
 | Rest | Recovery 100% |
-| Quest bonus | Split evenly across the stats the quest relates to |
+| Quest bonus | Split evenly across the stats the quest relates to (see quest stats below) |
 
 **Stat value** = 1 + floor(sqrt(statXp / 10)).
 
 **Level curve** = total XP needed to reach level L is round(60 x (L minus 1)^1.7), for L 1 to 99. Reference: L2 60, L3 195, L5 633, L10 2514. A first session of a walk and a meal reaches level 2.
 
-**Quest list** (pick 3 per day, seeded by `localDate`): Move 20 or more minutes; Log a meal with plants; Log sleep; Stretch or mobility 10 minutes; Hit all four plate checks in one meal; Log something before noon; Log two different log types today. Wording must be reviewed by hand for tone.
+**Quest list** (pick 3 per day, seeded by `localDate`): Move 20 or more minutes; Log a meal with plants; Log sleep; Stretch or mobility 10 minutes; Hit all four plate checks in one meal; Log something before noon; Log two different log types today. Wording must be reviewed by hand for tone. Related stats: Move 20+ min: strength, endurance. Meal with plants: vitality. Log sleep: recovery. Stretch 10 min: agility. Four plate checks: vitality. Before noon (`localMinutes` under 720): all five. Two log types: all five.
 
 **Eat presets** (suggestions only, the user can change the checks). Review each by hand against your Human Kinetics knowledge before shipping: jollof rice with chicken, beans and plantain, egusi soup with swallow, moi moi, efo riro with fish, akara and pap, fried rice with salad, yam and egg sauce, fruit and groundnuts.
 
@@ -127,11 +128,11 @@ Short terms (`fat`, `cure`, `treat`, `bmi`, `dose`) match whole words only, so "
 
 ## 7. Properties to test (fast-check)
 1. `xpForLevel` is strictly increasing and `levelFromXp(xpForLevel(L)) === L` for L 1 to 99. `levelFromXp` is non-decreasing in XP.
-2. For any valid log, XP awarded is an integer greater than or equal to 0, and adding it never decreases total XP or any stat.
+2. For any valid log, XP awarded is an integer greater than or equal to 0, and appending it after all existing logs never decreases total XP or any stat.
 3. Replay is deterministic and order-insensitive: shuffling the input array gives the same `CharacterState`.
 4. Per-day XP never exceeds the daily cap for any set of logs.
 5. Streak is at least 0, at most the number of distinct active days, and matches the definition in section 4.
-6. Deleting a log never increases total XP.
+6. Deleting a log never changes XP on earlier local days, and log XP on any day never exceeds the cap.
 7. Quest selection returns exactly 3 distinct quests for any date and is stable for the same date.
 8. Any string accepted by the coach validator has 240 characters or fewer and contains no banned stem. The orchestrator returns a non-empty string even when every provider throws or times out.
 9. A `CoachInput` built from any `CharacterState` contains only the allowed fields and value ranges.

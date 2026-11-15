@@ -26,7 +26,7 @@ As a user, I want to log last night's sleep so that Recovery grows.
 As a user, I want clear feedback on what each log earned.
 1. THE SYSTEM SHALL compute XP with the pure engine only, never in UI code.
 2. WHEN a log is saved, THE SYSTEM SHALL route its XP to the stats using the routing table in design section 3.
-3. THE SYSTEM SHALL cap XP at 300 per local day. Logs beyond the cap are saved and still trigger the coach, but award 0 XP.
+3. THE SYSTEM SHALL cap XP at 300 per local day. Logs beyond the cap are saved and still trigger the coach, but award 0 XP. Quest bonuses are not counted toward the cap.
 4. THE SYSTEM SHALL never produce negative XP or a decrease in any stat from adding a valid log.
 
 ## R5. Levels
