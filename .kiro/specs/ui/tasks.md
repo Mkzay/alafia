@@ -13,10 +13,10 @@ Rules for every task: data only through `@/data/hooks` (plus `schemas` and `erro
   - [x] 1.6 Serwist: add `@serwist/cli` and `esbuild`, `serwist.config.mjs`, `src/app/sw.ts` (precache, `NetworkOnly` for `/api/`, `/offline` fallback, `SKIP_WAITING` listener), `build` script `next build && serwist build`, `public/sw*` in `.gitignore`, plain production-only registration. Confirm `pnpm build` writes `public/sw.js` and its precache list includes `/`, `/log`, `/history`, `/settings` and `/offline`. _U11.2 to U11.4, U11.7, UI-3_
   - [x] 1.7 Local offline check: `pnpm build && pnpm start`, visit the four screens, go offline in a Playwright script, reload each screen and `/offline`, and record the result in `design.md` section 11.
 
-- [ ] 2. First Vercel deploy **STOP**
-  - [ ] 2.1 Ask you to link the Vercel project (or run `vercel link` together) and confirm the build command `pnpm build`. Do not deploy before you say go.
-  - [ ] 2.2 Deploy. On the live URL check: manifest valid and installable (Chrome DevTools or Lighthouse PWA audit), `sw.js` served with `Cache-Control: no-cache` and active, the four shells reload with the network off, `/api/` never in Cache Storage.
-  - [ ] 2.3 Write the findings and any fixes into `design.md` section 11 and `docs/04-decisions.md`. Fix blocking problems before task 3.
+- [x] 2. First Vercel deploy **STOP**
+  - [x] 2.1 Ask you to link the Vercel project (or run `vercel link` together) and confirm the build command `pnpm build`. Do not deploy before you say go.
+  - [x] 2.2 Deploy. On the live URL check: manifest valid and installable (Chrome DevTools or Lighthouse PWA audit), `sw.js` served with `Cache-Control: no-cache` and active, the four shells reload with the network off, `/api/` never in Cache Storage.
+  - [x] 2.3 Write the findings and any fixes into `design.md` section 11 and `docs/04-decisions.md`. Fix blocking problems before task 3.
 
 - [ ] 3. Home with empty state
   - [ ] 3.1 `display.ts` helpers: `xpBarFraction`, `statScale` (`max(strongest, 10)`), `streakChip`, `strongestStat`, with `display.test.ts`. _U2.3, U7.1, UI-4_
