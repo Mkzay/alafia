@@ -63,13 +63,14 @@ Status: approved, with the changes recorded in "Decisions" at the end.
 1. ALL user-facing coach lines (the template lines and `FALLBACK_LINE`) SHALL live in one data-only file, `src/coach/template-lines.ts`, so they can be reviewed in one place. It SHALL hold at least 5 lines for each of the 7 events and at least 40 in total.
 2. THE system SHALL choose a line with a seeded pick: `pickTemplate(input, seed, lastText?)`, where the event comes from `input`. The same arguments SHALL give the same line. WHEN `lastText` equals one of the event's rendered lines, THE pick SHALL NOT return it.
 3. THE seed is a string supplied by the caller. The pick SHALL hash it with a documented, stable hash and SHALL NOT use `Math.random` or the clock.
-4. Lines MAY use only the tokens `{xp}`, `{level}` and `{streak}`. `renderTemplate` SHALL replace them from the `CoachInput`. A token that is not on this list SHALL fail the template test.
+4. Lines MAY use only the tokens `{xp}`, `{level}`, `{streak}` and `{days}`. `renderTemplate` SHALL replace them from the `CoachInput`. `{days}` SHALL render "1 day" when the streak is 1 and "N days" otherwise. A token that is not on this list SHALL fail the template test. A test SHALL check that no rendered line says "1 days" or "N day" (except "N day streak") for any streak from 0 to 40.
 5. EVERY line, after rendering with the largest values (xp 360, level 99, streak 999) and with the smallest values (0, 1, 0), SHALL pass the validator (C2).
 6. NO user-facing text SHALL contain a dash character from C3.1. A test SHALL check every template line, the fallback line and every engine quest title.
 7. NO line SHALL use pressure words (`burn`, `shred`, `cheat`, `grind`, `no excuses`) or mention missed days, short sleep or food choices in a judging way. A test SHALL check the word list. The wording of the lines is a hand-review gate (see C10.5).
 8. Template lines SHALL be plain English in short sentences, warm and a little playful, with Nigerian-friendly phrasing where it is natural.
 9. THE system SHALL export a constant `FALLBACK_LINE` that passes the validator, used only if everything else fails. A test SHALL check that it passes.
 10. Templates ignore `tone` in this version. Tone only shapes AI output.
+11. WHEN `xpGained` is 0, THE pick SHALL never use a line containing `{xp}`. For `move`, `eat` and `rest` it SHALL use `ZERO_XP_LINES` (at least 5 per event). Zero XP comes from the daily cap, the 6th or later meal of a day, or a second Rest log the same day, and `CoachInput` does not say which, so every zero-XP line SHALL be true in all three cases.
 
 ## C6. Orchestrator gates
 1. `generateCoachLine(options)` SHALL return a `CoachOutput` with a non-empty `text` in every case, and SHALL NOT throw or reject.

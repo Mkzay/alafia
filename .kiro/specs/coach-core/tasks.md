@@ -22,6 +22,7 @@ Requirements: `requirements.md`. Design: `design.md`. Work in order. Each task e
 
 - [x] 4. Templates
   - [x] 4.1 Add `template-lines.ts` (all user-facing lines, data only) and `templates.ts`. _C5_
+  - [x] 4.3 Add `ZERO_XP_LINES` for 0-XP logs and the `{days}` plural token, with tests. _C5.4, C5.11_
   - [x] 4.2 Add `templates.test.ts` (counts, determinism, last-line avoidance, tokens, validator at both extremes, `FALLBACK_LINE` passes, no dashes in lines or quest titles, pressure words) and `templates.property.test.ts`. _C10.4, C10.8_
 
 - [x] 5. Orchestrator

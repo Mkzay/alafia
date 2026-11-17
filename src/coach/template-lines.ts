@@ -5,7 +5,10 @@ import type { CoachEvent } from './types';
  *
  * Rules, checked by tests in templates.test.ts:
  * - One or two short sentences, 240 characters or fewer after rendering.
- * - Only the tokens {xp}, {level} and {streak}.
+ * - Only the tokens {xp}, {level}, {streak} and {days}.
+ *   {days} renders "1 day" or "N days". Use it wherever a count of days is a noun.
+ *   "{streak} day streak" is fine because "day" is an adjective there.
+ * - Lines with {xp} are never shown when xpGained is 0 (see ZERO_XP_LINES).
  * - No dashes of any kind, no banned terms, no pressure words.
  * - Never judge missed days, sleep or food.
  */
@@ -43,12 +46,12 @@ export const TEMPLATE_LINES: Readonly<Record<CoachEvent, readonly string[]>> = {
     'You levelled up to {level}. Your habits are paying off.',
   ],
   streak: [
-    '{streak} days in a row. That is a real habit forming.',
-    'Streak: {streak} days! You keep showing up.',
+    '{days} in a row. That is a real habit forming.',
+    'Streak: {days}! You keep showing up.',
     'Day {streak} of your streak. Steady wins.',
     'Your streak hit {streak}. Nice and consistent.',
     '{streak} day streak! Your character is proud of you.',
-    'Look at that streak, {streak} days strong. Keep it easy and steady.',
+    'Look at that streak, {days} strong. Keep it easy and steady.',
   ],
   quest_done: [
     'Quest complete! Bonus XP is yours.',
@@ -65,6 +68,36 @@ export const TEMPLATE_LINES: Readonly<Record<CoachEvent, readonly string[]>> = {
     'Welcome back, hero. Pick up right where you are.',
     'Good to see you again. One log at a time.',
     'Every return is a win. Welcome back o.',
+  ],
+};
+
+/**
+ * Used instead of TEMPLATE_LINES when a Move, Eat or Rest log earns 0 XP.
+ * That happens at the 300 XP daily cap, on the 6th or later meal of a day, and on a
+ * second Rest log the same day. CoachInput does not say which, so every line here must
+ * be true in all three cases. No line may use {xp}.
+ */
+export const ZERO_XP_LINES: Readonly<Record<'move' | 'eat' | 'rest', readonly string[]>> = {
+  move: [
+    'Movement logged. No extra XP this time, but the habit still grows.',
+    'Logged! Your XP is full for today, and every move still counts.',
+    'Nice, still moving. Your XP is topped up for today.',
+    'Movement saved. The XP bar has had its fill today.',
+    'Logged. Your habit wins, even when the XP bar is full.',
+  ],
+  eat: [
+    'Meal logged. No extra XP this time, enjoy your food.',
+    'Logged, and your XP is full for today. Chop well.',
+    'Food noted. The XP bar is full for today, the habit still grows.',
+    'Thanks for logging that meal. No new XP, but every log helps.',
+    'Meal saved. Fresh XP comes back tomorrow.',
+  ],
+  rest: [
+    'Rest logged. No extra XP this time, so just relax.',
+    'Logged, and your XP is full for today. Rest well.',
+    'Rest noted. Fresh XP comes back tomorrow.',
+    'Rest saved. Your habit still grows, even with no new XP.',
+    'Rest logged again. Your recovery is in good hands.',
   ],
 };
 

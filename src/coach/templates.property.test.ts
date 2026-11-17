@@ -29,6 +29,17 @@ describe('template properties (COACH-10)', () => {
     );
   });
 
+  it('never shows an XP amount at 0 XP and never writes "1 days"', () => {
+    fc.assert(
+      fc.property(inputArb, fc.string(), (input, seed) => {
+        const zero = pickTemplate({ ...input, xpGained: 0 }, seed);
+        expect(zero, zero).not.toMatch(/\b0 XP\b|\+0\b/);
+        const one = pickTemplate({ ...input, streak: 1 }, seed);
+        expect(one, one).not.toMatch(/\b1 days\b/);
+      }),
+    );
+  });
+
   it('every pick passes the validator', () => {
     fc.assert(
       fc.property(inputArb, fc.string(), fc.option(fc.string(), { nil: undefined }), (input, seed, last) => {

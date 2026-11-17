@@ -69,6 +69,8 @@ Status values: **Approved** (you said yes), **Assumed** (Kiro chose it while bui
 | COACH-19 | Every user-facing coach line lives in `src/coach/template-lines.ts`. | One file to review. | Lines next to the logic. | `template-lines.ts` | Approved |
 | COACH-20 | The engine writes an `xpByDate` key for every date with a log, even at 0 XP. `welcome_back` reads the keys as the active dates. | Keeps the coach free of log access. | Pass the log list to the coach. | `src/engine/replay.ts`, `replay.zero-xp.test.ts` | Approved |
 | COACH-21 | The coach checks month and day ranges itself before date arithmetic, so "2026-13-45" or "2026-02-29" is treated as a bad date and `welcome_back` does not fire. | `Date.UTC` silently rolls invalid dates over, and coach code may not use `new Date`. Found by a test. | Trust the data layer's date schema. | `sanitize.ts` (`daysBetween`) | **Assumed** |
+| COACH-22 | When `xpGained` is 0, lines with `{xp}` are never used. Move, Eat and Rest switch to `ZERO_XP_LINES`, worded to be true for the daily cap, the 6th+ meal and a second Rest log, because `CoachInput` does not carry the reason. | No "+0 XP" lines, and no false "you hit the cap" claims. | Add a `zeroReason` field to `CoachInput` (changes the tech.md interface). | `template-lines.ts`, `templates.ts` (`linesFor`) | Approved |
+| COACH-23 | New token `{days}` renders "1 day" or "N days". "{streak} day streak" stays, since "day" is an adjective there. | Correct plurals at streak 1. | Avoid day counts in lines. | `templates.ts` (`daysLabel`) | Approved |
 
 ## How to change a decision
 1. Tell Kiro the ID and the new choice.
