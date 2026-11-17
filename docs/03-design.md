@@ -126,7 +126,7 @@ A day is active if it has at least one log. The streak is the count of consecuti
 ## 6. Output validation
 A line is valid only if all hold:
 - 1 to 240 characters after trimming, at most 2 sentences
-- contains none of the banned stems: `diagnos`, `prescri`, `medicat`, `dose`, `dosage`, `disease`, `cure`, `treat`, `calorie`, `kcal`, `lose weight`, `weight loss`, `bmi`, `fat`, `skinny`, `obese`, `you must`, `you should stop`
+- contains none of the banned stems: `diagnos`, `prescri`, `medicat`, `medicin`, `dose`, `dosage`, `disease`, `cure`, `treat`, `treatment`, `therap`, `symptom`, `supplement`, `detox`, `starv`, `calorie`, `kcal`, `lose weight`, `weight loss`, `bmi`, `fat`, `skinny`, `obese`, `you must`, `you should stop`
 - is not empty after stripping markdown and URLs
 Short terms (`fat`, `cure`, `treat`, `bmi`, `dose`) match as whole words together with their plain endings (`s`, `es`, `d`, `ed`, `ing`, `y`), so "treat", "treats", "treated", "treating", "cures", "fats" and "doses" are all rejected, while "fatigue" passes. "Treat yourself to rest" is rejected. When in doubt the validator rejects and the template is used. The banned list lives in one file and is easy to extend.
 

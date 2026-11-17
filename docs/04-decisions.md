@@ -65,6 +65,10 @@ Status values: **Approved** (you said yes), **Assumed** (Kiro chose it while bui
 | COACH-15 | The validator returns NFKC-normalized text with zero-width characters removed. | The text that is checked is the text that is shown. | Return the original text. | `validate.ts` | **Assumed** |
 | COACH-16 | Apostrophes and hyphens count as word boundaries, so "fat's" and "fat-free" are rejected. Phrase words may be joined by spaces, hyphens or underscores, so "weight-loss" is rejected. | Reject on doubt. | Spaces only. | `banned-terms.ts`, `validate.ts` | **Assumed** |
 | COACH-17 | A bare domain counts as a URL only for a fixed list of common top-level domains. | Avoids rejecting normal text such as "work.Rest" while catching "example.com". | Reject any `word.word`. | `validate.ts` | **Assumed** |
+| COACH-18 | Added long stems `treatment`, `therap`, `symptom`, `medicin`, `supplement`, `detox`, `starv`. A long stem matches anywhere, so all forms are caught (therapist, symptomatic, starvation and so on). | Medical and diet-culture words are a safety doubt. | Whole-word forms only. | `banned-terms.ts` | Approved |
+| COACH-19 | Every user-facing coach line lives in `src/coach/template-lines.ts`. | One file to review. | Lines next to the logic. | `template-lines.ts` | Approved |
+| COACH-20 | The engine writes an `xpByDate` key for every date with a log, even at 0 XP. `welcome_back` reads the keys as the active dates. | Keeps the coach free of log access. | Pass the log list to the coach. | `src/engine/replay.ts`, `replay.zero-xp.test.ts` | Approved |
+| COACH-21 | The coach checks month and day ranges itself before date arithmetic, so "2026-13-45" or "2026-02-29" is treated as a bad date and `welcome_back` does not fire. | `Date.UTC` silently rolls invalid dates over, and coach code may not use `new Date`. Found by a test. | Trust the data layer's date schema. | `sanitize.ts` (`daysBetween`) | **Assumed** |
 
 ## How to change a decision
 1. Tell Kiro the ID and the new choice.

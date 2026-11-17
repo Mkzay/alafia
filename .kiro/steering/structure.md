@@ -29,10 +29,17 @@ src/
     replay.ts          logs in, CharacterState out
   coach/
     types.ts           CoachInput, CoachOutput, CoachProvider
+    constants.ts       timeouts, limits, milestones, time buckets
+    schemas.ts         strict Zod schemas for CoachInput and CoachOutput
+    banned-terms.ts    banned stems, short-term forms, phrases (data)
+    dashes.ts          dash normalizer for AI text
+    validate.ts        length, sentence, URL and banned-term checks
+    sanitize.ts        CharacterState to CoachInput
+    hash.ts            FNV-1a for seeded picks
+    template-lines.ts  every user-facing coach line (review here)
+    templates.ts       render and seeded pick
     orchestrator.ts    provider order, timeouts, fallback
-    validate.ts        length and banned-term checks
-    templates.ts       template lines per event
-    providers/         groq.ts, gemini.ts
+    providers/         groq.ts, gemini.ts (spec 3b)
   data/
     schemas.ts         Zod schemas for logs, settings, coach messages, export
     errors.ts          DataError

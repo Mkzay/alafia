@@ -1,6 +1,6 @@
 # Coach core (spec 3a): Design
 
-Implements `requirements.md` in this folder. Decisions COACH-1 to COACH-17 are in `docs/04-decisions.md`.
+Implements `requirements.md` in this folder. Decisions COACH-1 to COACH-20 are in `docs/04-decisions.md`. Status: approved.
 
 ## 1. Module map (`src/coach`)
 | File | Responsibility | Requirements |
@@ -13,7 +13,8 @@ Implements `requirements.md` in this folder. Decisions COACH-1 to COACH-17 are i
 | `validate.ts` | `validateCoachText`, plus the cleaning helpers it uses. | C2 |
 | `hash.ts` | `fnv1a(text)`: 32-bit FNV-1a, the same algorithm the engine uses for quests. | C5.3 |
 | `sanitize.ts` | `buildCoachInput`, `validateCoachInput`, `timeBucketFor`, `chooseEvent`. | C4 |
-| `templates.ts` | `TEMPLATE_LINES`, `FALLBACK_LINE`, `renderTemplate`, `pickTemplate`. | C5 |
+| `template-lines.ts` | Data only: `TEMPLATE_LINES` and `FALLBACK_LINE`. Every user-facing coach line is here and nowhere else. | C5.1, C5.9 |
+| `templates.ts` | `renderTemplate`, `pickTemplate`. Re-exports the lines. | C5 |
 | `orchestrator.ts` | `generateCoachLine`. | C6, C7 |
 | `providers/` | Empty in 3a. Groq and Gemini arrive in 3b. | |
 
@@ -32,8 +33,9 @@ export const COACH_STATS: readonly CoachStat[] =
 
 ## 3. Banned terms (`banned-terms.ts`)
 ```ts
-export const LONG_STEMS = ['diagnos', 'prescri', 'medicat', 'dosage', 'disease',
-  'calorie', 'kcal', 'skinny', 'obese'] as const;
+export const LONG_STEMS = ['diagnos', 'prescri', 'medicat', 'medicin', 'dosage', 'disease',
+  'calorie', 'kcal', 'skinny', 'obese', 'treatment', 'therap', 'symptom',
+  'supplement', 'detox', 'starv'] as const;
 
 /** Whole-word forms. Plain endings s, es, d, ed, ing, y, written out for review. */
 export const SHORT_TERM_FORMS = {
@@ -105,8 +107,8 @@ validateCoachInput(value: unknown): { ok: true; input: CoachInput } | { ok: fals
 - Defensive reads: `before.quests ?? []`, `before.xpByDate ?? {}` and `after.stats?.[s]?.xp`. The property test feeds corrupt states.
 
 ## 7. Templates (`templates.ts`)
-- `TEMPLATE_LINES: Record<CoachEvent, readonly string[]>`. The plan is 6 lines per event, 42 in total. Lines are short, use only `{xp}`, `{level}` and `{streak}`, and contain no dash characters and no ` - `. The lines are written in task 4 and reviewed by you (C10.5).
-- `FALLBACK_LINE = 'Logged. Nice one, keep it going.'`
+- `template-lines.ts` holds `TEMPLATE_LINES: Record<CoachEvent, readonly string[]>` and `FALLBACK_LINE`, and nothing else. The plan is 6 lines per event, 42 in total. Lines are short, use only `{xp}`, `{level}` and `{streak}`, and contain no dash characters and no ` - `. They are reviewed by you (C10.5).
+- `FALLBACK_LINE = 'Logged. Nice one, keep it going.'` A test checks that it passes the validator.
 - `renderTemplate(line, input)` replaces `/\{(xp|level|streak)\}/g` with `String(input.xpGained | level | streak)`. Values come from a parsed `CoachInput`, so they are always integers.
 - `pickTemplate(input, seed, lastText?)`:
   1. Render every line for `input.event`.

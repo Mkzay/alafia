@@ -82,6 +82,18 @@ describe('replay properties', () => {
     );
   });
 
+  it('xpByDate has exactly one key per active date up to asOf', () => {
+    fc.assert(
+      fc.property(logsArb(40), (logs) => {
+        const keys = Object.keys(replay(logs, asOf).xpByDate).sort();
+        const active = [...new Set(logs.map((l) => l.localDate))]
+          .filter((d) => d <= asOf.localDate)
+          .sort();
+        expect(keys).toEqual(active);
+      }),
+    );
+  });
+
   it('removing a log leaves earlier dates unchanged', () => {
     fc.assert(
       fc.property(logsArb().filter((l) => l.length > 0), fc.nat(), (logs, pick) => {

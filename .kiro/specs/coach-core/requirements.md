@@ -27,7 +27,7 @@ Status: approved, with the changes recorded in "Decisions" at the end.
    - it contains none of the banned terms.
 3. SENTENCE COUNT: a sentence ends at `.`, `!`, `?` or `…` (a run such as `...` or `?!` counts once) that is followed by whitespace or the end of the text. A decimal such as `7.5` does not end a sentence. Text with no terminator counts as one sentence.
 4. BANNED TERMS live in one file, `src/coach/banned-terms.ts`, as data that is easy to extend:
-   - Long stems (`diagnos`, `prescri`, `medicat`, `dosage`, `disease`, `calorie`, `kcal`, `skinny`, `obese`) match anywhere in the text.
+   - Long stems match anywhere in the text, so every form of the word is caught: `diagnos`, `prescri`, `medicat` (medication, medications, medicated), `medicin` (medicine, medicines, medicinal), `dosage`, `disease`, `calorie`, `kcal`, `skinny`, `obese`, `treatment` (treatment, treatments), `therap` (therapy, therapies, therapist, therapeutic), `symptom` (symptom, symptoms, symptomatic), `supplement` (supplement, supplements, supplemented, supplementing), `detox` (detox, detoxes, detoxed, detoxing, detoxify), `starv` (starve, starves, starved, starving, starvation).
    - Short terms (`fat`, `cure`, `treat`, `bmi`, `dose`) match as whole words together with their plain endings `s`, `es`, `d`, `ed`, `ing` and `y`, applying the usual spelling rules (a final `e` drops before `ing` and `y`; `fat` doubles its `t` before `ed`, `ing` and `y`). The file lists every resulting form explicitly so it can be reviewed: `treat treats treated treating treaty`, `cure cures cured curing`, `fat fats fatted fatting fatty`, `dose doses dosed dosing`, `bmi bmis`.
    - Phrases (`lose weight`, `weight loss`, `you must`, `you should stop`) match with any run of whitespace between words.
 5. Matching SHALL be case-insensitive and SHALL run on text normalized with Unicode NFKC, with zero-width characters removed, so that look-alike forms do not slip through.
@@ -60,7 +60,7 @@ Status: approved, with the changes recorded in "Decisions" at the end.
 8. `validateCoachInput(unknown)` SHALL return a typed result using the strict schema, for the server route in 3b.
 
 ## C5. Template coach
-1. `src/coach/templates.ts` SHALL hold hand-written lines per event: at least 5 lines for each of the 7 events and at least 40 in total.
+1. ALL user-facing coach lines (the template lines and `FALLBACK_LINE`) SHALL live in one data-only file, `src/coach/template-lines.ts`, so they can be reviewed in one place. It SHALL hold at least 5 lines for each of the 7 events and at least 40 in total.
 2. THE system SHALL choose a line with a seeded pick: `pickTemplate(input, seed, lastText?)`, where the event comes from `input`. The same arguments SHALL give the same line. WHEN `lastText` equals one of the event's rendered lines, THE pick SHALL NOT return it.
 3. THE seed is a string supplied by the caller. The pick SHALL hash it with a documented, stable hash and SHALL NOT use `Math.random` or the clock.
 4. Lines MAY use only the tokens `{xp}`, `{level}` and `{streak}`. `renderTemplate` SHALL replace them from the `CoachInput`. A token that is not on this list SHALL fail the template test.
@@ -68,7 +68,7 @@ Status: approved, with the changes recorded in "Decisions" at the end.
 6. NO user-facing text SHALL contain a dash character from C3.1. A test SHALL check every template line, the fallback line and every engine quest title.
 7. NO line SHALL use pressure words (`burn`, `shred`, `cheat`, `grind`, `no excuses`) or mention missed days, short sleep or food choices in a judging way. A test SHALL check the word list. The wording of the lines is a hand-review gate (see C10.5).
 8. Template lines SHALL be plain English in short sentences, warm and a little playful, with Nigerian-friendly phrasing where it is natural.
-9. THE system SHALL export a constant `FALLBACK_LINE` that passes the validator, used only if everything else fails.
+9. THE system SHALL export a constant `FALLBACK_LINE` that passes the validator, used only if everything else fails. A test SHALL check that it passes.
 10. Templates ignore `tone` in this version. Tone only shapes AI output.
 
 ## C6. Orchestrator gates
@@ -133,3 +133,6 @@ Rationale and how to change each one: `docs/04-decisions.md`, COACH-1 to COACH-1
 - **Q8 (COACH-8).** One spend per run after the cheap gates. A line that fails validation moves to the next provider. The 4 second total includes the spend check.
 - **COACH-9.** `CoachInput.xpGained` is widened to 0 to 360 instead of clamping at 300. `tech.md` and `docs/03-design.md` are updated.
 - **COACH-10.** A property test checks that no rendered template has unreplaced braces or `NaN`.
+- **COACH-18.** Added long stems `treatment`, `therap`, `symptom`, `medicin`, `supplement`, `detox`, `starv` (`medicat` was already there).
+- **COACH-19.** All user-facing coach lines live in `src/coach/template-lines.ts`.
+- **COACH-20.** The engine's `xpByDate` has a key for every date with at least one log, even when its XP is 0. `welcome_back` relies on this. Tested in `src/engine/replay.zero-xp.test.ts` and by a replay property test.
