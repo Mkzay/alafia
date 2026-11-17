@@ -38,7 +38,8 @@ Rules for every task: data only through `@/data/hooks` (plus `schemas` and `erro
   - [ ] 5.5 Redeploy and check the slice on a phone: log a Move offline and online.
 
 - [ ] 6. Eat
-  - [ ] 6.1 `eat-presets.ts` with the starting checks from the requirements, marked not final. _U5.7, U5.8, UI-7_
+  - [ ] 6.0 Hand review of the Eat preset checks by you, before any preset is used. **STOP** _U14.6, UI-7_
+  - [ ] 6.1 `eat-presets.ts` with the checks you approved in 6.0. _U5.7, U5.8, UI-7_
   - [ ] 6.2 `EatForm`: slot chips with the time-of-day default (read in a mount effect), four check toggles, preset chips that set checks and `presetId`. Enable the Eat tab. _U5.5 to U5.7, U4.8_
   - [ ] 6.3 Tests: slot defaults at 10:59, 11:00, 15:59, 16:00, 21:59, 22:00; preset fills checks and id; editing a check after a preset; no calorie, gram or weight fields in the DOM.
 
@@ -76,6 +77,6 @@ Rules for every task: data only through `@/data/hooks` (plus `schemas` and `erro
   - [ ] 13.2 Playwright: `playwright.config.ts` with `pnpm build && pnpm start` as the web server, Chromium at 360 by 740, `@axe-core/playwright`, and `e2e/smoke.spec.ts` covering U14.5 and the axe scans. Install the Chromium browser. _U14.5, UI-10_
   - [ ] 13.3 Accessibility pass: keyboard-only run through every flow, screen reader spot checks, 320 px width and 200% zoom. _U12_
   - [ ] 13.4 Polish within the tokens. No new features.
-  - [ ] 13.5 Hand reviews by you: all copy files, the Eat preset checks. **STOP**
+  - [ ] 13.5 Hand review of all copy files by you. **STOP**
   - [ ] 13.6 Final deploy and the hackathon "done" check on a phone: three logs in under a minute, level up, coach reacts, airplane mode, keep logging.
   - [ ] 13.7 Update `structure.md`, the specs and `docs/04-decisions.md`, then tick these boxes.
