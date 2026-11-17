@@ -1,3 +1,6 @@
+# pnpm 11 reads allowBuilds. pnpm 9 and 10 (Vercel's default for lockfile 9.0) read onlyBuiltDependencies.
+onlyBuiltDependencies:
+  - esbuild
 allowBuilds:
   esbuild: true
   sharp: false
