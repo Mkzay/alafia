@@ -45,6 +45,27 @@ Status values: **Approved** (you said yes), **Assumed** (Kiro chose it while bui
 | DL-13 | Dexie transactions return validation errors as values and the caller throws them. | Dexie wraps errors thrown inside a transaction, which hid the `validation` code. | Catch and unwrap Dexie errors. | `dexie-repository.ts` (`updateLog`) | **Assumed** |
 | DL-14 | Vitest 5 has no `environmentMatchGlobs`, so DOM tests opt in with a `// @vitest-environment jsdom` comment at the top of each `*.dom.test.tsx` file. | The option was removed in this Vitest version. | Vitest projects config. | `src/data/hooks.dom.test.tsx` | **Assumed** |
 
+## Coach core, spec 3a (spec: `.kiro/specs/coach-core`)
+| ID | Decision | Why | Alternatives | Lives in | Status |
+|---|---|---|---|---|---|
+| COACH-1 | Short banned terms (`fat`, `cure`, `treat`, `bmi`, `dose`) match as whole words plus plain endings `s`, `es`, `d`, `ed`, `ing`, `y`. The forms are written out in the file. "Treaty" and "fatty acids" are rejected on purpose. | Reject on doubt. | Exact whole words only. | `src/coach/banned-terms.ts` | Approved |
+| COACH-2 | Strip markdown, reject any URL. | A link in a coach line is a safety doubt. | Strip URLs and keep the line. | `validate.ts` | Approved |
+| COACH-3 | Em, en and other Unicode dashes in AI text become a hyphen between digits and a comma elsewhere, in a separate step before validation. The 3b system prompt forbids dashes. | Keeps the house style without throwing away good AI lines. The validator stays as in design section 6. | Reject lines with dashes. | `dashes.ts`, `orchestrator.ts`, 3b prompt | Approved |
+| COACH-4 | Event precedence: `level_up`, `quest_done`, `streak` (milestones 3, 7, 14, 30), `welcome_back` (3 or more local days since the last earlier log), then the log type. | The docs listed events but no rule. | Other milestones or gap length. | `sanitize.ts`, `constants.ts` | Approved |
+| COACH-5 | Top stat ties go to the fixed stat order. Buckets: morning 05:00 to 11:59, afternoon 12:00 to 16:59, evening 17:00 to 20:59, night 21:00 to 04:59. Tone is `hype` for level up, quest and streak, `warm` otherwise. | Deterministic and simple. | Other hours or tie rules. | `sanitize.ts` | Approved |
+| COACH-6 | Coach repeats the five stat names, checked at compile time against `StatId` and by a test against `STAT_ORDER`. Production code imports engine types only. | Keeps the `structure.md` boundary. | Import `STAT_ORDER` at run time. | `coach/types.ts` | Approved |
+| COACH-7 | Templates use `{xp}`, `{level}`, `{streak}` and ignore tone. | Reactive lines without 70+ tone-tagged lines. | Tone-tagged lines. | `templates.ts` | Approved |
+| COACH-8 | One budget spend per run, after the offline, AI-off and no-provider gates. A line that fails validation moves to the next provider. The 4 second total includes the spend check. | Budget only counts real attempts. | Spend per provider call. | `orchestrator.ts` | Approved |
+| COACH-9 | `CoachInput.xpGained` is 0 to 360, not clamped at 300. | A log can add 300 log XP plus 3 quest bonuses of 20. Clamping would misreport it. | Clamp at 300. | `tech.md`, `docs/03-design.md`, `coach/schemas.ts` | Approved |
+| COACH-10 | A property test checks that no rendered template has unreplaced braces or `NaN`. | Guards template edits. | Unit tests only. | `templates.property.test.ts` | Approved |
+| COACH-11 | `pickTemplate` takes the whole `CoachInput`, not just the event. | It must render lines to compare them with the last shown text. | Compare raw lines. | `templates.ts` | **Assumed** |
+| COACH-12 | Invalid orchestrator input returns `FALLBACK_LINE`. | Without valid input there is no event to pick a template for. | A default-event template. | `orchestrator.ts` | **Assumed** |
+| COACH-13 | The 4 second total is one timer that aborts a signal, and each provider's signal follows it. No clock is read. | "Time left" falls out of the timers, the code stays pure, and fake timers drive the tests. | `Date.now()` arithmetic; `AbortSignal.any`. | `orchestrator.ts` | **Assumed** |
+| COACH-14 | Coach has its own copy of the 32-bit FNV-1a hash. | The engine's copy is private, and coach may import engine types only. | Export it from the engine. | `coach/hash.ts` | **Assumed** |
+| COACH-15 | The validator returns NFKC-normalized text with zero-width characters removed. | The text that is checked is the text that is shown. | Return the original text. | `validate.ts` | **Assumed** |
+| COACH-16 | Apostrophes and hyphens count as word boundaries, so "fat's" and "fat-free" are rejected. Phrase words may be joined by spaces, hyphens or underscores, so "weight-loss" is rejected. | Reject on doubt. | Spaces only. | `banned-terms.ts`, `validate.ts` | **Assumed** |
+| COACH-17 | A bare domain counts as a URL only for a fixed list of common top-level domains. | Avoids rejecting normal text such as "work.Rest" while catching "example.com". | Reject any `word.word`. | `validate.ts` | **Assumed** |
+
 ## How to change a decision
 1. Tell Kiro the ID and the new choice.
 2. Kiro updates the matching spec in `.kiro/specs`, the files in `docs/`, the code and the tests in one change.

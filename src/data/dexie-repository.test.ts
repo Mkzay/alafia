@@ -91,7 +91,10 @@ describe('dexie transactions are all-or-nothing', () => {
     await done();
   });
 
-  it('trySpendAiCall does not spend when the write fails', async () => {
+  // A single failed put has nothing to roll back, so this test passes even without a
+  // transaction. The transaction in trySpendAiCall is proven by the contract test
+  // "never over-spends under concurrent calls", which fails (30 of 30 granted) without it.
+  it('trySpendAiCall reports a storage error and spends nothing when the write fails', async () => {
     const { db, repo, done } = await open();
     vi.spyOn(db.settings, 'put').mockRejectedValue(new Error('boom'));
     await expect(repo.trySpendAiCall()).rejects.toMatchObject({ code: 'storage' });

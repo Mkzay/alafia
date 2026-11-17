@@ -112,8 +112,12 @@ A day is active if it has at least one log. The streak is the count of consecuti
 3. Otherwise POST to `/api/coach`. Show a template line right away as a placeholder only if the call takes longer than 1.5 s, then replace it if the AI line arrives and validates. The total wait never exceeds 4.5 s.
 4. Server: validate the body with Zod, build the prompt from enums and numbers only, try providers in `COACH_PROVIDERS` order with a 3 s timeout each inside a 4 s total budget, validate output, return `{ text, provider }` or an error. The client falls back to a template on any error.
 
+**CoachInput ranges**: `xpGained` is an integer from 0 to 360. That is the 300 daily log cap plus up to three quest bonuses of 20, which one log can complete at once. It is not clamped.
+
+**Event choice** (first match wins): `level_up` when the level rose; `quest_done` when more quests are done than before; `streak` when the streak rose to 3, 7, 14 or 30; `welcome_back` when the last earlier log was 3 or more local days before this log's date; otherwise the log type (`move`, `eat`, `rest`).
+
 **Drafted system prompt** (fixed on the server)
-> You are a warm, brief wellness game coach inside a habit game. Reply with one or two short sentences, maximum 240 characters, plain English. Encourage and reflect on the event only. Do not give medical advice, diagnoses, dosing, calorie or weight targets, or comments on bodies. Never shame. No emojis other than at most one. Never mention being an AI.
+> You are a warm, brief wellness game coach inside a habit game. Reply with one or two short sentences, maximum 240 characters, plain English. Encourage and reflect on the event only. Do not give medical advice, diagnoses, dosing, calorie or weight targets, or comments on bodies. Never shame. No emojis other than at most one. Do not use dashes of any kind; use commas or full stops instead. Never mention being an AI.
 
 **User message** (built by the server): "Event: {event}. XP gained: {xpGained}. Level: {level}. Streak: {streak} days. Strongest stat: {topStat}. Time of day: {timeBucket}. Tone: {tone}."
 
@@ -124,7 +128,9 @@ A line is valid only if all hold:
 - 1 to 240 characters after trimming, at most 2 sentences
 - contains none of the banned stems: `diagnos`, `prescri`, `medicat`, `dose`, `dosage`, `disease`, `cure`, `treat`, `calorie`, `kcal`, `lose weight`, `weight loss`, `bmi`, `fat`, `skinny`, `obese`, `you must`, `you should stop`
 - is not empty after stripping markdown and URLs
-Short terms (`fat`, `cure`, `treat`, `bmi`, `dose`) match whole words only, so "fatigue" or "treat yourself to rest" are handled deliberately rather than by accident. When in doubt the validator rejects and the template is used. The banned list lives in one file and is easy to extend.
+Short terms (`fat`, `cure`, `treat`, `bmi`, `dose`) match as whole words together with their plain endings (`s`, `es`, `d`, `ed`, `ing`, `y`), so "treat", "treats", "treated", "treating", "cures", "fats" and "doses" are all rejected, while "fatigue" passes. "Treat yourself to rest" is rejected. When in doubt the validator rejects and the template is used. The banned list lives in one file and is easy to extend.
+
+**Dash normalization** runs as a separate step before validation, on AI lines only. Em dashes, en dashes and the other Unicode dash characters become a hyphen between two digits ("3–5" becomes "3-5") and a comma everywhere else ("Nice work — rest well" becomes "Nice work, rest well"). Template lines are written without dashes and are tested for it.
 
 ## 7. Properties to test (fast-check)
 1. `xpForLevel` is strictly increasing and `levelFromXp(xpForLevel(L)) === L` for L 1 to 99. `levelFromXp` is non-decreasing in XP.
@@ -134,8 +140,8 @@ Short terms (`fat`, `cure`, `treat`, `bmi`, `dose`) match whole words only, so "
 5. Streak is at least 0, at most the number of distinct active days, and matches the definition in section 4.
 6. Deleting a log never changes XP on earlier local days, and log XP on any day never exceeds the cap.
 7. Quest selection returns exactly 3 distinct quests for any date and is stable for the same date.
-8. Any string accepted by the coach validator has 240 characters or fewer and contains no banned stem. The orchestrator returns a non-empty string even when every provider throws or times out.
-9. A `CoachInput` built from any `CharacterState` contains only the allowed fields and value ranges.
+8. Any string accepted by the coach validator has 240 characters or fewer and contains no banned stem. The orchestrator returns a non-empty string even when every provider throws or times out. Any template rendered with any valid `CoachInput` has no unreplaced braces and no `NaN`.
+9. A `CoachInput` built from any `CharacterState` contains only the allowed fields and value ranges (`xpGained` 0 to 360).
 10. `avatarTier` returns a value from 1 to 4 for every level from 1 to 99 and never decreases as level increases.
 
 ## 8. PWA and offline

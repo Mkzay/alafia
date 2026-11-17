@@ -29,7 +29,7 @@ export type CoachEvent =
 
 export interface CoachInput {
   event: CoachEvent;
-  xpGained: number;   // integer 0..300
+  xpGained: number;   // integer 0..360 (300 daily log cap plus up to 3 quest bonuses of 20)
   level: number;      // integer 1..99
   streak: number;     // integer 0..999
   topStat: 'strength' | 'endurance' | 'agility' | 'vitality' | 'recovery';
