@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# serwist (generated service worker)
+public/sw*
+
+# playwright
+/test-results/
+/playwright-report/
+

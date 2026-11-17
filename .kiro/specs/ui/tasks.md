@@ -4,14 +4,14 @@ Requirements: `requirements.md`. Design: `design.md`. Ordered as a vertical slic
 Each task ends with `pnpm test`, `pnpm lint`, `pnpm typecheck` and `pnpm build` passing. Tasks marked **STOP** wait for you.
 Rules for every task: data only through `@/data/hooks` (plus `schemas` and `errors`); no clock, randomness or ids during render; copy only in `src/components/copy/`; locators in e2e use `getByRole`.
 
-- [ ] 1. Foundation and PWA
-  - [ ] 1.1 Tokens and fonts: CSS variables and `@theme inline` in `globals.css`, Chakra Petch 500 and 700 through `next/font/google`, remove Geist, reduced-motion rules. Add `tokens.test.ts` for contrast. _U12.1, U13.1 to U13.3, UI-8_
-  - [ ] 1.2 Shell: `layout.tsx` with skip link, `<main>`, `AppNav`, `ScreenHeader` with focus on route change, `Skeleton`. Stub screens for `/`, `/log`, `/history`, `/settings` that render their skeleton and heading, each with `metadata`. `error.tsx`, `not-found.tsx`, `/offline`. _U1.1 to U1.5, U10.4, U11.3, U12.3_
-  - [ ] 1.3 Copy files under `src/components/copy/` with the strings used so far, and `copy.test.ts`. _U13.4 to U13.6, U14.4_
-  - [ ] 1.4 Boundary test for `src/components` and `src/app`, and the lint rule against `Date.now`, `new Date()` and `Math.random` in components. _U14.1, U14.2, U14.7, UI-1, UI-16_
-  - [ ] 1.5 Manifest (`app/manifest.ts`), layout `viewport.themeColor`, icon SVG, `scripts/make-icons.tsx`, committed PNGs at 192, 512 and maskable 512. _U11.1, UI-9_
-  - [ ] 1.6 Serwist: add `@serwist/cli` and `esbuild`, `serwist.config.mjs`, `src/app/sw.ts` (precache, `NetworkOnly` for `/api/`, `/offline` fallback, `SKIP_WAITING` listener), `build` script `next build && serwist build`, `public/sw*` in `.gitignore`, plain production-only registration. Confirm `pnpm build` writes `public/sw.js` and its precache list includes `/`, `/log`, `/history`, `/settings` and `/offline`. _U11.2 to U11.4, U11.7, UI-3_
-  - [ ] 1.7 Local offline check: `pnpm build && pnpm start`, visit the four screens, go offline in a Playwright script, reload each screen and `/offline`, and record the result in `design.md` section 11.
+- [x] 1. Foundation and PWA
+  - [x] 1.1 Tokens and fonts: CSS variables and `@theme inline` in `globals.css`, Chakra Petch 500 and 700 through `next/font/google`, remove Geist, reduced-motion rules. Add `tokens.test.ts` for contrast. _U12.1, U13.1 to U13.3, UI-8_
+  - [x] 1.2 Shell: `layout.tsx` with skip link, `<main>`, `AppNav`, `ScreenHeader` with focus on route change, `Skeleton`. Stub screens for `/`, `/log`, `/history`, `/settings` that render their skeleton and heading, each with `metadata`. `error.tsx`, `not-found.tsx`, `/offline`. _U1.1 to U1.5, U10.4, U11.3, U12.3_
+  - [x] 1.3 Copy files under `src/components/copy/` with the strings used so far, and `copy.test.ts`. _U13.4 to U13.6, U14.4_
+  - [x] 1.4 Boundary test for `src/components` and `src/app`, and the lint rule against `Date.now`, `new Date()` and `Math.random` in components. _U14.1, U14.2, U14.7, UI-1, UI-16_
+  - [x] 1.5 Manifest (`app/manifest.ts`), layout `viewport.themeColor`, icon SVG, `scripts/make-icons.tsx`, committed PNGs at 192, 512 and maskable 512. _U11.1, UI-9_
+  - [x] 1.6 Serwist: add `@serwist/cli` and `esbuild`, `serwist.config.mjs`, `src/app/sw.ts` (precache, `NetworkOnly` for `/api/`, `/offline` fallback, `SKIP_WAITING` listener), `build` script `next build && serwist build`, `public/sw*` in `.gitignore`, plain production-only registration. Confirm `pnpm build` writes `public/sw.js` and its precache list includes `/`, `/log`, `/history`, `/settings` and `/offline`. _U11.2 to U11.4, U11.7, UI-3_
+  - [x] 1.7 Local offline check: `pnpm build && pnpm start`, visit the four screens, go offline in a Playwright script, reload each screen and `/offline`, and record the result in `design.md` section 11.
 
 - [ ] 2. First Vercel deploy **STOP**
   - [ ] 2.1 Ask you to link the Vercel project (or run `vercel link` together) and confirm the build command `pnpm build`. Do not deploy before you say go.

@@ -93,7 +93,7 @@ Exact stat hues are fixed in task 2 and checked by a contrast unit test (`tokens
 
 ## 6. Avatar (U3, UI-14)
 One `<svg viewBox="0 0 200 200" role="img" aria-label={label}>` with two groups, driven by props `{ level, stats }` and CSS variables.
-- **Emblem frame:** five ring segments around the center, 72 degrees each with a 6 degree gap, starting at the top and going clockwise in `STAT_ORDER`. Each segment draws a background arc in `--line-strong` and a fill arc in its stat color whose sweep is `fraction x 66 degrees`, with `fraction = value / statScale`. The arc path math is in `emblem.ts` (`arcPath(cx, cy, r, startDeg, endDeg)`) and is unit-tested for endpoints.
+- **Emblem frame:** five ring segments around the center, one per 72 degrees, starting at the top and going clockwise in `STAT_ORDER`. Each arc sweeps 54 degrees with an 18 degree gap, because the round line caps reach about 5 degrees past each end; the visible gap is about 8 degrees (checked on the rendered icon in task 1.5). Each segment draws a background arc in `--line-strong` and a fill arc in its stat color whose sweep is `fraction x 54 degrees`, with `fraction = value / statScale`. The arc path math is in `emblem.ts` (`arcPath(cx, cy, r, startDeg, endDeg)`) and is unit-tested for endpoints.
 - **Tier ornament:** `avatarTier(level)` sets `data-tier` on the svg. Tier 1: plain ring. Tier 2: an outer thin ring and four notch marks. Tiers 3 and 4: tier 2 plus a pointed crest at the top (3) and a gold glow filter (4). Each tier is a small `<g>` shown with CSS `[data-tier]` selectors, so swapping tiers is a static change (U3.3).
 - **Character:** a simple front-facing figure drawn with circles and rounded rects (head, torso, arms, legs) in `--text`, with tier accessories: tier 1 a headband, tier 2 adds a shoulder pad and a scarf, tier 3 a cape, tier 4 a crown and glow. Tiers 1 and 2 are drawn first. If the one-day time-box runs out, tiers 3 and 4 reuse tier 2's figure with only the frame ornament changed (U3.6).
 - **Label:** `avatarLabel(level, stats, hasLogs)` gives "Level 4 character, strongest stat Endurance" or "Level 1 character, just getting started" (U3.5). The svg's inner shapes are `aria-hidden`.
@@ -163,8 +163,16 @@ Follows Serwist's configurator mode for Next.js, which builds the worker after `
 - **Before the update toast exists** (steps 1 to 12 in section 15), registration is a plain `navigator.serviceWorker.register('/sw.js')` in a production-only effect, and updates apply on next launch.
 - **Manifest (`app/manifest.ts`):** name "Alafia", short name "Alafia", `start_url: '/'`, `display: 'standalone'`, `background_color` and `theme_color` from `--bg`, and three icons (192, 512, maskable 512). Layout `viewport.themeColor` matches.
 
+### Findings from task 1 (local production build, 2026-11-17)
+- **Build command:** `next build && serwist build serwist.config.mjs`. The Serwist CLI looks for `serwist.config.js` by default, so the `.mjs` path is passed explicitly.
+- **Packages:** `@serwist/next`, `@serwist/cli` and `serwist` aligned at 9.5.15, all as dev dependencies, since they run only at build time. `esbuild` needs its install script, allowed in `pnpm-workspace.yaml`.
+- **Precache:** 37 URLs, about 1.01 MB uncompressed (the Next.js and React runtime is most of it, and transfer is compressed). It includes `/`, `/log`, `/history`, `/settings` and `/offline`, the icons, and the 8 self-hosted font files.
+- **Fonts:** Serwist's default glob patterns skip `.woff2`, so offline screens would fall back to the system font. `serwist.config.mjs` adds `.next/static/media/**/*.woff2` (about 60 KB, UI-20).
+- **Worker types:** `src/app/sw.ts` needs the `webworker` lib, which conflicts with the app's `dom` lib. It is excluded from `tsconfig.json` and checked by `tsconfig.sw.json`, and `pnpm typecheck` runs both.
+- **Offline check (`e2e/offline-shell.spec.ts`, passing):** the worker takes control on the first visit, the manifest is served with `display: standalone` and both icon sizes, all four screens load with the network off (including a full reload), an uncached path falls back to `/offline`, and no `/api/` URL is in any cache. The same test runs against the live URL with `E2E_BASE_URL` in task 2.2.
+
 ## 12. Icons (UI-9)
-`public/icons/icon.svg` is the tier 1 emblem on `--bg`. `scripts/make-icons.tsx` uses `ImageResponse` from `next/og` to render it at 192 and 512, plus a maskable 512 with the emblem inside the 80% safe zone, and writes the PNGs to `public/icons/`. It runs once with `pnpm tsx scripts/make-icons.tsx` (a dev-only `tsx` dependency, or `node --experimental-strip-types` if it works with JSX here). The PNGs are committed, so builds do not depend on the script.
+`public/icons/icon.svg` is the tier 1 emblem on `--bg`. `scripts/make-icons.mjs` uses `ImageResponse` from `next/og.js` to render it at 192 and 512, plus a maskable 512 with the emblem inside the 80% safe zone, and writes the PNGs to `public/icons/`. It is plain ESM with `React.createElement`, so it runs with `node scripts/make-icons.mjs` and needs no `tsx` (UI-21). The PNGs are committed, so builds do not depend on the script. `src/app/icon.svg` and `src/app/apple-icon.png` are copies used by Next's icon file convention, and the scaffold `favicon.ico` is removed.
 
 ## 13. Boundaries and lint
 - `src/components/boundary.test.ts`:
