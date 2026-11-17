@@ -73,6 +73,28 @@ Status values: **Approved** (you said yes), **Assumed** (Kiro chose it while bui
 | COACH-24 | Move earns 0 XP only at the daily cap, so Move zero-XP lines may mention a full XP bar. Eat and Rest zero-XP lines must not, since a 6th meal or a second Rest log earns 0 below the cap. A test checks it. Lines may use contractions; at most 2 start with "Nice" and at most 2 use "every". | Earlier Eat and Rest zero lines made a false claim. | One neutral set for all three. | `template-lines.ts`, `templates.test.ts` | Approved |
 | COACH-23 | New token `{days}` renders "1 day" or "N days". "{streak} day streak" stays, since "day" is an adjective there. | Correct plurals at streak 1. | Avoid day counts in lines. | `templates.ts` (`daysLabel`) | Approved |
 
+## UI, spec 4 (spec: `.kiro/specs/ui`)
+| ID | Decision | Why | Alternatives | Lives in | Status |
+|---|---|---|---|---|---|
+| UI-1 | Components may import from the engine only `QUEST_DEFINITIONS`, `avatarTier`, `types.ts` and `constants.ts`. | Display needs titles and tiers. Rules stay in the engine. | New hooks in `src/data`. | `src/components/boundary.test.ts` | Approved |
+| UI-2 | Offline is detected with `navigator.onLine` and window events. No experimental `useOffline`. | `useOffline` also makes failed navigations wait, which could block the service worker's cached pages. | `next/offline`. | `hooks/use-online.ts` | Approved |
+| UI-3 | Serwist configurator mode, `next build && serwist build`. | Works with Turbopack and precaches every prerendered route. | `@serwist/turbopack` route handler. | `serwist.config.mjs`, `src/app/sw.ts` | Approved |
+| UI-4 | Stat bars and emblem segments fill to `value / max(strongest value, 10)`. | A new character does not show full bars. | Relative to the strongest; absolute scale. | `home/display.ts` (`statScale`) | Approved |
+| UI-5 | The log moment shows on Home, handed over in memory. | The character changes in place, one tap fewer. | Result panel on the Log screen. | `log-moment/moment-store.ts` | Approved |
+| UI-6 | Defaults: Cardio 20 min Moderate; Eat slot by time of day; Rest 7.5 h quality 3; then last used values. | Fast logging. | Always last used. | `log/defaults.ts` | Approved |
+| UI-7 | Eat presets are UI data. Suggested checks are not final. | The engine never reads presets. | Engine-owned presets. | `log/eat-presets.ts` | Pending review |
+| UI-8 | Kiro's default dark tokens as CSS variables; Chakra Petch 500 and 700 via `next/font`. | Swappable later; no runtime font fetch. | Your existing tokens. | `globals.css`, `layout.tsx` | Approved |
+| UI-9 | Icons from an SVG emblem, PNGs generated once with `ImageResponse` and committed. | No image dependency at build. | Image library. | `public/icons/`, `scripts/make-icons.tsx` | Approved |
+| UI-10 | `@axe-core/playwright` scans each screen in the smoke test. | Catches serious accessibility issues early. | Manual only. | `e2e/smoke.spec.ts` | Approved |
+| UI-11 | Dialog and transient state is local and resets on hide with a `useLayoutEffect` cleanup. | Avoids `useSearchParams` and its Suspense need under Cache Components. | Dialog state in the URL. | `hooks/use-reset-on-hide.ts` | Approved |
+| UI-12 | Home is one scrolling page, top block above the fold at 360 by 740. | Readable on small phones. | No-scroll layout. | `home/HomeScreen` | Approved |
+| UI-13 | First Vercel deploy and offline check come right after the PWA foundation, before polish. Kiro asks before deploying. | Catch Serwist and caching problems early. | Deploy at the end. | `design.md` section 15 | Approved |
+| UI-14 | Avatar is time-boxed to one day as parametric SVG, tiers 1 and 2 first. | Scope control. | Full four tiers at once. | `avatar/` | Approved |
+| UI-15 | Forms and transient UI reset when their screen is hidden. | Activity keeps routes mounted. | Keep drafts. | `use-reset-on-hide.ts` | Approved |
+| UI-16 | Components may import `@/data/schemas` and `@/data/errors` as well as `@/data/hooks`. | Forms validate with the same Zod schemas and read error codes. Neither touches storage. | Re-declare validation in the UI. | `src/components/boundary.test.ts` | **Assumed** |
+| UI-17 | Log times show in 12-hour form ("9:30 am"); day headers use "Today", "Yesterday" or "Mon 16 Nov", formatted from the stored date in UTC so time zones cannot shift it. | Common in Nigeria; stable history. | 24-hour time. | `history/format.ts` | **Assumed** |
+| UI-18 | Service worker registration and the update toast use a small custom hook, not `SerwistProvider`. | The toast must wait while the Log screen is open or a save is running, which needs app state. | `SerwistProvider`. | `hooks/use-sw-update.ts` | **Assumed** |
+
 ## How to change a decision
 1. Tell Kiro the ID and the new choice.
 2. Kiro updates the matching spec in `.kiro/specs`, the files in `docs/`, the code and the tests in one change.

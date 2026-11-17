@@ -5,7 +5,7 @@ Scope: every screen under `src/app`, the components under `src/components`, the 
 Built only against what exists: the hooks in `src/data/hooks.ts` and the pure coach layer in `src/coach`. No changes to `src/engine`, `src/data` or `src/coach` logic.
 Out of scope (spec 3b): `/api/coach`, real AI providers, the 4.5 second client wait for an AI line. Until 3b, the UI calls `generateCoachLine` with no providers, so every coach line is a template. The "Offline coach only" switch is stored now and takes effect in 3b.
 
-Status: draft for review. Open questions are at the end.
+Status: approved, with the changes recorded in "Decisions" at the end. The Eat preset checks are not final.
 
 ## Glossary
 - **Snapshot status**: `loading` until the data store has read storage, then `ready`. Server rendering always sees `loading`.
@@ -31,7 +31,7 @@ Status: draft for review. Open questions are at the end.
 
 ## U3. Avatar (R11.4 to R11.6, D7)
 1. THE avatar SHALL be one parametric SVG component with two layers: an emblem frame with five segments, one per stat, and a character illustration inside it. No raster art.
-2. EACH segment's fill length SHALL follow its stat value on a display scale (see Q4).
+2. EACH segment's fill length, and each stat bar on Home, SHALL be `value / max(strongest stat value, 10)` (UI-4).
 3. BOTH layers SHALL change visual tier at levels 5, 10 and 20, using `avatarTier(level)` (1 to 4).
 4. Colors and sizes SHALL come from CSS variables so the avatar matches the theme.
 5. THE avatar SHALL have `role="img"` and an accessible name that states the level and the strongest stat, for example "Level 4 character, strongest stat Endurance". With no logs it SHALL say "Level 1 character, just getting started".
@@ -129,7 +129,7 @@ Status: draft for review. Open questions are at the end.
 6. Food examples SHALL be Nigerian where food is shown.
 
 ## U14. Boundaries and tests
-1. Components SHALL get data only through `src/data/hooks.ts` and SHALL NOT import Dexie, `src/data/store`, `src/data/repositories` or any repository.
+1. Components SHALL get data only through `src/data/hooks.ts` and SHALL NOT import Dexie, `src/data/store`, `src/data/repositories` or any repository. They MAY import `src/data/schemas` (to validate form input with the same Zod schemas the data layer uses) and `src/data/errors` (to read error codes), because neither touches storage (UI-16).
 2. Components SHALL NOT compute XP, stats, levels, streaks or quests. They MAY import the display helpers listed in Q1.
 3. Component tests (Vitest, jsdom, Testing Library) SHALL cover: each log form's validation and defaults; the 4-tap Move path; the Rest short-night note; the log moment at 0 XP and on level up; reduced motion; streak chip states; history grouping, edit and delete confirmation; export file name; reset confirmation; the memory-mode notice.
 4. A test SHALL check that every copy string has no dash character, no pressure word and no banned coach term.
@@ -143,21 +143,25 @@ Status: draft for review. Open questions are at the end.
 - R11: U2, U3, U6.3, U12. R12: U8. R13: U11. R14: U9.
 - Design section 9: U1 to U9, U13. Design section 10: U4.5, U4.6, U10.
 
-## Open questions (need your decision before design)
-**Q1. Engine imports in components.** The UI needs the quest titles (`QUEST_DEFINITIONS`), `avatarTier`, the stat order and a few limits (minutes 1 to 300, hours 0 to 14). None of these compute stats, but `structure.md` only says components go through `data/hooks.ts` for data. Recommendation: allow components to import an explicit allow-list from the engine (`quests.ts` titles, `levels.ts` `avatarTier`, `types.ts`, `constants.ts`) and nothing else (`replay`, `xp`, `stats`, `streaks` stay off-limits). A boundary test enforces the list. The alternative is new hooks that return these, which means changing `src/data`.
+## Decisions (approved)
+Rationale and how to change each one: `docs/04-decisions.md`, UI-1 to UI-15.
+- **Q1 (UI-1).** Components may import an allow-list from the engine: quest titles (`quests.ts`), `avatarTier` (`levels.ts`), `types.ts` and `constants.ts`. `replay`, `xp`, `stats` and `streaks` stay off-limits. A boundary test enforces it.
+- **Q2 (UI-2).** Offline is detected with a small client hook over `navigator.onLine` and the `online` and `offline` events. Next's experimental `useOffline` is not used. In 3b a failed `/api/coach` call also marks the app offline.
+- **Q3 (UI-3).** Serwist configurator mode: `@serwist/next/config` plus `@serwist/cli`, built with `next build && serwist build`. Adds dev dependencies `@serwist/cli` and `esbuild`. `public/sw*` is git-ignored.
+- **Q4 (UI-4, changed).** Stat bars and emblem segments fill to `value / max(strongest stat value, 10)`. A new character, with every value at 1, shows bars at one tenth, not full. The number is always shown next to each bar.
+- **Q5 (UI-5).** The log moment happens on Home after the save, handed over through an in-memory one-shot value that is never persisted.
+- **Q6 (UI-6).** Defaults: Move is Cardio, 20 minutes, Moderate. Eat picks the slot by time of day with no checks ticked. Rest is 7.5 hours, quality 3. After the first log of a type, the last used values replace these.
+- **Q7 (UI-7, not final).** Eat presets are UI data in `src/components/log/eat-presets.ts`. The suggested checks in the table below are a starting point only. You will review them separately, and the hand-review gate in U14.6 stays closed until you do.
+- **Q8 (UI-8, changed).** Kiro's default dark palette and one accent color, defined as CSS variables in `globals.css` so they can be swapped later. Chakra Petch is self-hosted through `next/font/google` for headings and numbers, with the system font for text. The scaffold's Geist fonts are removed.
+- **Q9 (UI-9).** The app icon is the tier 1 emblem as SVG. The 192 and 512 PNGs, including a maskable one, are generated once with Next's `ImageResponse` and committed to `public/icons/`.
+- **Q10 (UI-10).** `@axe-core/playwright` is added, and the smoke test scans the four screens, failing on serious or critical issues.
+- **Q11 (UI-11).** Dialog and transient state stays local and resets in a `useLayoutEffect` cleanup when the screen is hidden. No `useSearchParams`.
+- **Q12 (UI-12).** Home is one scrolling page, with the avatar, level, XP bar and streak above the fold at 360 by 740.
+- **UI-13 (added).** An early task deploys to Vercel and checks the Serwist build and offline behavior on the live URL before any UI polish.
+- **UI-14 (added).** The avatar is time-boxed to one day of work as parametric SVG. Tiers 1 and 2 ship first.
+- **UI-15 (confirmed).** Forms and transient UI reset when their screen is hidden (U1.6).
 
-**Q2. How "offline" is detected.** Options: (a) a small client hook over `navigator.onLine` plus `online` and `offline` events; (b) Next's experimental `useOffline` with `experimental.useOffline: true`. `useOffline` is more accurate, but it is experimental and it also changes navigation, making failed navigations wait for the network instead of failing. That could stop a navigation from reaching the service worker's cached page. Recommendation: (a) now. In 3b, a failed `/api/coach` call also marks the app offline, which is what design section 8 asks for. Revisit (b) after the offline smoke test passes.
-
-**Q3. Serwist setup.** Our build uses Turbopack, so the classic webpack plugin does not apply. Options: (a) configurator mode: `@serwist/next/config` plus `@serwist/cli`, with `next build && serwist build`. It precaches every prerendered route, which covers our four static screens. (b) `@serwist/turbopack`: a route handler serves the worker. Recommendation: (a). It precaches the screens with no route list to maintain, and it keeps `next.config.ts` unchanged. It adds dev dependencies `@serwist/cli` and `esbuild`, and `public/sw*` is git-ignored. `@serwist/next` and `serwist` are already installed.
-
-**Q4. Stat bar and emblem scale.** A stat value has no maximum. Options: (a) relative to the strongest stat, with a minimum denominator of 5, so a new character shows short bars and the shape shows balance; (b) an absolute scale where value 20 is full, which looks almost empty for weeks; (c) progress to the next stat value, which means computing stat thresholds in the UI. Recommendation: (a). The value number is always shown next to the bar, so nothing is hidden.
-
-**Q5. Where the log moment happens.** Options: (a) save, return to Home, and show the XP, coach line and level-up there, next to the character; (b) show a result panel on the Log screen with a "Done" button. Recommendation: (a). The judge sees the character change in place, and it saves a tap. The log result is handed to Home through a small in-memory, one-shot value in `src/components`, never persisted.
-
-**Q6. Defaults.** Recommendation: Move defaults to Cardio, 20 minutes, Moderate. Eat defaults the slot by time of day (U5.6) with no checks ticked. Rest defaults to 7.5 hours, quality 3. After the first log of a type, the last used values replace these.
-
-**Q7. Eat presets.** The brief puts presets with the domain rules, but the engine never reads them (XP comes from the checks). Recommendation: keep them as UI data in `src/components/log/eat-presets.ts`, with ids, names and suggested checks, behind a hand-review gate. Suggested starting checks, for your review against your Human Kinetics knowledge:
-
+### Eat preset starting checks (not final, pending your review)
 | Preset | Protein | Veggies or fruit | Fiber-rich carb |
 |---|---|---|---|
 | Jollof rice with chicken | yes | no | no |
@@ -171,13 +175,3 @@ Status: draft for review. Open questions are at the end.
 | Fruit and groundnuts | yes | yes | no |
 
 Water is never pre-ticked.
-
-**Q8. Display font and tokens.** Design section 9 says to reuse your existing design tokens, which are not in this repo. Recommendation: you paste or point to them. Otherwise I propose a dark palette with one teal or gold accent, and "Chakra Petch" (via `next/font/google`, self-hosted at build time) for headings and numbers, with the system font for text. The Geist fonts from the scaffold would be removed.
-
-**Q9. Icons.** Recommendation: draw the app icon as SVG (the tier 1 emblem) and generate the 192 and 512 PNGs, including a maskable version, with a one-off script using Next's `ImageResponse`. The PNGs are committed to `public/icons/`. This adds no dependency. The alternative is a new image library as a dev dependency.
-
-**Q10. Accessibility check in the smoke test.** Recommendation: add `@axe-core/playwright` as a dev dependency and run one axe scan on each of the four screens in the smoke test, failing on serious or critical issues. Manual keyboard and screen reader checks still happen in the polish pass.
-
-**Q11. Edit dialogs and Activity.** The Next.js guide suggests putting dialog state in the URL so it resets on navigation. That needs `useSearchParams`, which needs a Suspense boundary under Cache Components. Recommendation: keep dialog state local and close it in a `useLayoutEffect` cleanup when the screen is hidden, as the same guide shows. The edit view uses a route-free dialog.
-
-**Q12. "On one screen" for Home.** R11.1 asks for everything on one screen. Recommendation: one page, with the top block (avatar, level, XP bar, streak) above the fold at 360 by 740 (U2.2), and stats, quests and the coach bubble below it with normal scrolling. A no-scroll layout would make every element tiny on small phones.
