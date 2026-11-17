@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "verify": "pnpm lint && pnpm typecheck",
+    "check:kiro": "node scripts/check-kiro-tracked.mjs"
   },
   "dependencies": {
     "@serwist/next": "^9.5.13",

@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Lint and typecheck on save",
+      "trigger": "PostFileSave",
+      "description": "Runs eslint and tsc after a TypeScript file is saved.",
+      "matcher": "\\.(ts|tsx|mts)$",
+      "action": {
+        "type": "command",
+        "command": "pnpm verify",
+        "timeout": 120
+      }
+    }
+  ]
+}

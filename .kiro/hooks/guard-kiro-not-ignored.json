@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Guard: .kiro must not be gitignored",
+      "trigger": "PostFileSave",
+      "description": "Fails if .gitignore (or git) ignores anything under .kiro. The same check runs in pnpm test.",
+      "matcher": "(^|[\\\\/])\\.gitignore$",
+      "action": {
+        "type": "command",
+        "command": "node scripts/check-kiro-tracked.mjs",
+        "timeout": 30
+      }
+    }
+  ]
+}
