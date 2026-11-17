@@ -1,6 +1,6 @@
 # UI (spec 4): Design
 
-Implements `requirements.md` in this folder. Decisions UI-1 to UI-18 are in `docs/04-decisions.md`.
+Implements `requirements.md` in this folder. Decisions UI-1 to UI-19 are in `docs/04-decisions.md`. Status: approved.
 Built on Next.js 16.4 (App Router, Turbopack, `cacheComponents` and `partialPrefetching` on), React 19.3, Tailwind 4. Checked against the bundled docs in `node_modules/next/dist/docs/`.
 
 ## 1. Rendering model
@@ -159,7 +159,8 @@ Follows Serwist's configurator mode for Next.js, which builds the worker after `
   - `fallbacks.entries`: `/offline` for `request.destination === 'document'` (U11.3).
   - A `message` listener calls `self.skipWaiting()` on `{ type: 'SKIP_WAITING' }`, so updates wait for the user (U11.6).
   - The worker's `tsconfig` concerns are handled by a triple-slash `/// <reference lib="webworker" />` and excluding `src/app/sw.ts` from the app's type check if Serwist's types require it (decided in task 3).
-- **Registration and updates (`hooks/use-sw-update.ts`):** in production only, register `/sw.js` in an effect after load. Watch `registration.waiting` and `updatefound`. When a worker is waiting and the current path is not `/log` and no save is in progress (read from a tiny `busy` flag in the moment store), `UpdateToast` shows "New version ready" with "Refresh". Refresh posts `SKIP_WAITING`, then reloads on `controllerchange` (U11.6). Not using `SerwistProvider` keeps this logic in one testable hook (UI-18).
+- **Registration and updates (`hooks/use-sw-update.ts`):** in production only, register `/sw.js` in an effect after load. Watch `registration.waiting` and `updatefound`. When a worker is waiting and the current path is not `/log` and no save is in progress (read from a tiny `busy` flag in the moment store), `UpdateToast` shows "New version ready" with "Refresh". Refresh posts `SKIP_WAITING`, then reloads on `controllerchange` (U11.6). Not using `SerwistProvider` keeps this logic in one testable hook (UI-18). The hook stays minimal and is time-boxed to one hour. If it takes longer, the fallback is Serwist's default behavior: the waiting worker activates on the next launch and no toast is shown. The fallback is then logged as a decision and U11.6 is updated to match.
+- **Before the update toast exists** (steps 1 to 12 in section 15), registration is a plain `navigator.serviceWorker.register('/sw.js')` in a production-only effect, and updates apply on next launch.
 - **Manifest (`app/manifest.ts`):** name "Alafia", short name "Alafia", `start_url: '/'`, `display: 'standalone'`, `background_color` and `theme_color` from `--bg`, and three icons (192, 512, maskable 512). Layout `viewport.themeColor` matches.
 
 ## 12. Icons (UI-9)
@@ -196,17 +197,21 @@ Follows Serwist's configurator mode for Next.js, which builds the worker after `
 
 Time-dependent component tests use `vi.useFakeTimers()` with `vi.setSystemTime()` and a memory repository through `setStoreForTesting`.
 
-## 15. Delivery order (UI-13)
-1. **Walking skeleton:** tokens, fonts, layout, nav, four screens with skeletons, a minimal Move form that saves and shows "+N XP" on Home.
-2. **PWA foundation:** manifest, icons, Serwist worker, `/offline`, registration.
-3. **First Vercel deploy and offline check** (before any polish): deploy the walking skeleton, then on the live URL check that the manifest is valid and installable, `sw.js` is served and active, the four screens reload with the network off, `/api/coach` is not in any cache, and the logged data survives a reload. Findings are written into this design before task 4. This step needs your Vercel account, so Kiro will stop and ask before deploying.
-4. Full log forms and the log moment with the coach reaction.
-5. Home: character card, stats, quests, streak, coach bubble, empty state.
-6. Avatar (one-day time-box, tiers 1 and 2 first).
-7. History with edit and delete.
-8. Settings with export and reset; notices; update toast.
-9. Playwright smoke test with axe; accessibility pass.
-10. Visual polish, then hand reviews (copy, Eat presets, avatar tiers).
+## 15. Delivery order (UI-13, vertical slice)
+Each step ships something that runs end to end. The full order and checkpoints are in `tasks.md`.
+1. **Foundation and PWA:** tokens, fonts, layout, nav, four screens as skeleton shells, manifest, icons, Serwist worker, `/offline`, registration.
+2. **First Vercel deploy and offline check**, before any feature work: on the live URL, check that the manifest is installable, `sw.js` is served and active, the four shells reload with the network off, and `/api/` is never cached. Findings are written into this design. Kiro stops and asks before deploying, because it needs your Vercel account.
+3. **Home with empty state:** character card with level, XP bar and streak, a placeholder avatar slot, coach bubble, and the "Log your first quest" empty state.
+4. **Log screen, Move only.**
+5. **Log moment on Home:** XP gained, coach line through the coach layer, and the level-up moment.
+6. Eat form with presets.
+7. Rest form.
+8. History with edit and delete.
+9. Settings with export, reset, the AI switch and notices.
+10. Quests on Home.
+11. Avatar tiers 1 and 2 (one-day time-box).
+12. Avatar tiers 3 and 4, only if time remains.
+13. Update toast (UI-18, one-hour time-box), Playwright smoke test with axe, accessibility pass, polish and hand reviews.
 
 ## 16. Out of scope
 `/api/coach`, real providers, the client wait for an AI line (3b). Any change to engine, data or coach logic. If a screen needs data the hooks do not expose, Kiro stops and asks rather than reaching past the hooks.

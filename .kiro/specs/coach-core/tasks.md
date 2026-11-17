@@ -29,8 +29,8 @@ Requirements: `requirements.md`. Design: `design.md`. Work in order. Each task e
   - [x] 5.1 Add `orchestrator.ts`. _C6, C7_
   - [x] 5.2 Add `orchestrator.test.ts` with fake timers, and `orchestrator.property.test.ts`. _C10.6, C10.7_
 
-- [ ] 6. Boundary and wrap-up
+- [x] 6. Boundary and wrap-up
   - [x] 6.1 Add `boundary.test.ts` for `src/coach`. _C8_
   - [x] 6.2 Remove `src/coach/providers/.gitkeep` only if `providers/` gets a file (it does not in 3a, so keep it). Run the full suite, lint, typecheck and `pnpm build`.
   - [x] 6.3 Update `structure.md` and `docs/04-decisions.md`, tick these boxes.
-  - [ ] 6.4 Hand review of `template-lines.ts` by the user. Do not tick until approved. _C10.5_
+  - [x] 6.4 Hand review of `template-lines.ts` by the user. Approved on 2026-11-17. _C10.5_

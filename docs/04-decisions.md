@@ -93,7 +93,8 @@ Status values: **Approved** (you said yes), **Assumed** (Kiro chose it while bui
 | UI-15 | Forms and transient UI reset when their screen is hidden. | Activity keeps routes mounted. | Keep drafts. | `use-reset-on-hide.ts` | Approved |
 | UI-16 | Components may import `@/data/schemas` and `@/data/errors` as well as `@/data/hooks`. | Forms validate with the same Zod schemas and read error codes. Neither touches storage. | Re-declare validation in the UI. | `src/components/boundary.test.ts` | **Assumed** |
 | UI-17 | Log times show in 12-hour form ("9:30 am"); day headers use "Today", "Yesterday" or "Mon 16 Nov", formatted from the stored date in UTC so time zones cannot shift it. | Common in Nigeria; stable history. | 24-hour time. | `history/format.ts` | **Assumed** |
-| UI-18 | Service worker registration and the update toast use a small custom hook, not `SerwistProvider`. | The toast must wait while the Log screen is open or a save is running, which needs app state. | `SerwistProvider`. | `hooks/use-sw-update.ts` | **Assumed** |
+| UI-18 | Service worker registration and the update toast use a small custom hook, not `SerwistProvider`. Kept minimal and time-boxed to one hour. If it runs over, fall back to Serwist's default (apply on next launch, no toast) and log that as a new decision. | The toast must wait while the Log screen is open or a save is running, which needs app state. | `SerwistProvider`; no toast. | `hooks/use-sw-update.ts` | Approved |
+| UI-19 | Tasks follow a vertical slice: PWA and first deploy, Home empty state, Move logging, the log moment on Home, then Eat, Rest, History, Settings, quests, avatar tiers 1 and 2, tiers 3 and 4 if time remains. | Each step runs end to end and can be demoed. | Layer by layer. | `.kiro/specs/ui/tasks.md` | Approved |
 
 ## How to change a decision
 1. Tell Kiro the ID and the new choice.
