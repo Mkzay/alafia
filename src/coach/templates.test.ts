@@ -98,6 +98,37 @@ describe('template rules', () => {
   });
 });
 
+describe('variety and voice', () => {
+  const fileLines = [...allLines, FALLBACK_LINE];
+
+  it('has at most 2 lines starting with "Nice"', () => {
+    const hits = fileLines.filter((l) => /^Nice\b/.test(l));
+    expect(hits.length, hits.join(' | ')).toBeLessThanOrEqual(2);
+  });
+
+  it('has at most 2 lines using "every"', () => {
+    const hits = fileLines.filter((l) => /\bevery\w*/i.test(l));
+    expect(hits.length, hits.join(' | ')).toBeLessThanOrEqual(2);
+  });
+
+  it('keeps the voice in the game world, not on bodies', () => {
+    for (const l of fileLines) expect(l, l).not.toMatch(/\bbod(y|ies)\b/i);
+  });
+
+  it('accepts contractions and uses straight apostrophes only', () => {
+    const withContractions = fileLines.filter((l) => /\w'\w/.test(l));
+    expect(withContractions.length).toBeGreaterThan(0);
+    for (const l of withContractions) expect(validateCoachText(l).ok, l).toBe(true);
+    for (const l of fileLines) expect(l, l).not.toMatch(/[\u2018\u2019]/);
+  });
+
+  it('Eat and Rest zero-XP lines never claim the XP bar is full', () => {
+    for (const l of [...ZERO_XP_LINES.eat, ...ZERO_XP_LINES.rest]) {
+      expect(l, l).not.toMatch(/\b(full|limit|topped up|had its fill|cap)\b/i);
+    }
+  });
+});
+
 describe('rendering', () => {
   it('fills every token', () => {
     expect(renderTemplate('{xp} {level} {streak}', input('move', 45, 3, 7))).toBe('45 3 7');
